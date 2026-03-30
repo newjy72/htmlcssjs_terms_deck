@@ -3,27 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HTML+CSS+Javascript 용어 카드덱 퀴즈(난이도 자동 상승 + 보충설명)</title>
+  <title>용어 카드덱 퀴즈(난이도 자동 상승 + 보충설명)</title>
   <style>
     :root{
-      --bg:#0b1020;
-      --card:rgba(255,255,255,0.08);
-      --line:rgba(255,255,255,0.14);
-      --text:rgba(255,255,255,0.92);
-      --muted:rgba(255,255,255,0.65);
-      --ok:#31d07f;
-      --bad:#ff5a72;
-      --try:#ffd24d;
-      --accent:#00a0ff;
-
-      --tileMin: 100px; /* 기본 촘촘 */
-      --tilePad: 8px;
-      --termSize: 12px;
-      --topicSize: 10px;
-      --stateSize: 10px;
-      --tileMinH: 64px;
+      --bg:#0b1020; --card:rgba(255,255,255,0.08); --line:rgba(255,255,255,0.14);
+      --text:rgba(255,255,255,0.92); --muted:rgba(255,255,255,0.65);
+      --ok:#31d07f; --bad:#ff5a72; --try:#ffd24d; --accent:#00a0ff;
+      --tileMin: 100px; --tilePad: 8px; --termSize: 12px; --topicSize: 10px; --stateSize: 10px; --tileMinH: 64px;
     }
-
     *{ box-sizing:border-box; }
     body{
       margin:0;
@@ -36,125 +23,44 @@
       color: var(--text);
       line-height:1.35;
     }
-
     header{
       padding:14px 16px 12px;
       border-bottom:1px solid var(--line);
       background: rgba(0,0,0,0.18);
-      position: sticky;
-      top:0;
+      position: sticky; top:0;
       backdrop-filter: blur(8px);
       z-index: 5;
     }
+    .title{ margin:0; font-size:17px; font-weight:900; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .badge{ font-size:12px; padding:4px 10px; border:1px solid var(--line); border-radius:999px; color: var(--muted); background: rgba(255,255,255,0.06); }
+    .sub{ margin:6px 0 0; color: var(--muted); font-size:13px; white-space: pre-wrap; }
 
-    .title{
-      margin:0;
-      font-size:17px;
-      font-weight:900;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .badge{
-      font-size:12px;
-      padding:4px 10px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color: var(--muted);
-      background: rgba(255,255,255,0.06);
-    }
-    .sub{
-      margin:6px 0 0;
-      color: var(--muted);
-      font-size:13px;
-      white-space: pre-wrap;
-    }
-
-    main{
-      max-width: 1750px;
-      margin: 0 auto;
-      padding: 12px 16px 28px;
-      display: grid;
-      gap: 12px;
-      grid-template-columns: 1fr 410px;
-    }
-    @media (max-width: 980px){
-      main{ grid-template-columns: 1fr; }
-    }
-
-    .panel{
-      border:1px solid var(--line);
-      border-radius:16px;
-      background: var(--card);
-      padding:12px;
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:end;
-    }
-
-    label{
-      font-size:12px;
-      color: var(--muted);
-    }
+    main{ max-width: 1750px; margin: 0 auto; padding: 12px 16px 28px; display: grid; gap: 12px; grid-template-columns: 1fr 410px; }
+    @media (max-width: 980px){ main{ grid-template-columns: 1fr; } }
+    .panel{ border:1px solid var(--line); border-radius:16px; background: var(--card); padding:12px; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:end; }
+    label{ font-size:12px; color: var(--muted); }
     input, select, button{
-      font: inherit;
-      color: var(--text);
+      font: inherit; color: var(--text);
       background: rgba(255,255,255,0.06);
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 10px 12px;
       outline:none;
     }
-    button{
-      cursor:pointer;
-      font-weight:900;
-      transition: transform 0.06s ease, background 0.2s ease;
-    }
+    button{ cursor:pointer; font-weight:900; transition: transform 0.06s ease, background 0.2s ease; }
     button:active{ transform: scale(0.99); }
-
     .btn-primary{ background: rgba(0,160,255,0.22); border-color: rgba(0,160,255,0.35); }
     .btn-ok{ background: rgba(49,208,127,0.20); border-color: rgba(49,208,127,0.35); }
     .btn-bad{ background: rgba(255,90,114,0.20); border-color: rgba(255,90,114,0.35); }
     .btn-warn{ background: rgba(255,210,77,0.18); border-color: rgba(255,210,77,0.35); }
-
     .small{ font-size:12px; color: var(--muted); margin: 8px 0 0; }
 
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top: 10px;
-    }
-    .tab{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,0.16);
-      color: var(--muted);
-      cursor:pointer;
-      font-weight: 900;
-      font-size: 12px;
-      user-select:none;
-    }
-    .tab.active{
-      color: rgba(255,255,255,0.92);
-      border-color: rgba(0,160,255,0.45);
-      background: rgba(0,160,255,0.14);
-    }
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; }
+    .tab{ padding: 8px 10px; border-radius: 999px; border: 1px solid var(--line); background: rgba(0,0,0,0.16); color: var(--muted); cursor:pointer; font-weight: 900; font-size: 12px; user-select:none; }
+    .tab.active{ color: rgba(255,255,255,0.92); border-color: rgba(0,160,255,0.45); background: rgba(0,160,255,0.14); }
 
-    .deck{
-      display:grid;
-      gap:8px;
-      grid-template-columns: repeat(auto-fill, minmax(var(--tileMin), 1fr));
-      align-content: start;
-      margin-top: 10px;
-    }
-
+    .deck{ display:grid; gap:8px; grid-template-columns: repeat(auto-fill, minmax(var(--tileMin), 1fr)); align-content: start; margin-top: 10px; }
     .card{
       border:1px solid var(--line);
       background: rgba(0,0,0,0.20);
@@ -169,99 +75,25 @@
       overflow:hidden;
     }
     .card:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.22); }
-
     .card .topic{ font-size: var(--topicSize); color: var(--muted); }
-    .card .term{
-      font-size: var(--termSize);
-      font-weight: 900;
-      letter-spacing: 0.2px;
-      line-height: 1.15;
-    }
+    .card .term{ font-size: var(--termSize); font-weight: 900; letter-spacing: 0.2px; line-height: 1.15; }
     .card .state{ font-size: var(--stateSize); color: var(--muted); }
-
-    .card[data-state="try"]{
-      border-color: rgba(255,210,77,0.55);
-      background: rgba(255,210,77,0.10);
-    }
-    .card[data-state="wrong"]{
-      border-color: rgba(255,90,114,0.55);
-      background: rgba(255,90,114,0.10);
-    }
-    .card[data-state="correct"]{
-      border-color: rgba(49,208,127,0.60);
-      background: rgba(49,208,127,0.10);
-    }
+    .card[data-state="try"]{ border-color: rgba(255,210,77,0.55); background: rgba(255,210,77,0.10); }
+    .card[data-state="wrong"]{ border-color: rgba(255,90,114,0.55); background: rgba(255,90,114,0.10); }
+    .card[data-state="correct"]{ border-color: rgba(49,208,127,0.60); background: rgba(49,208,127,0.10); }
 
     .stat{ display:grid; gap:10px; }
-    .pill{
-      border:1px solid var(--line);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-      color: var(--muted);
-      background: rgba(255,255,255,0.05);
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      width: fit-content;
-    }
-    .toast{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:10px 12px;
-      background: rgba(0,0,0,0.22);
-      color: var(--muted);
-      font-size: 13px;
-      white-space: pre-wrap;
-    }
+    .pill{ border:1px solid var(--line); border-radius: 999px; padding: 6px 10px; font-size: 12px; color: var(--muted); background: rgba(255,255,255,0.05); display:inline-flex; align-items:center; gap:8px; width: fit-content; }
+    .toast{ border:1px solid var(--line); border-radius:14px; padding:10px 12px; background: rgba(0,0,0,0.22); color: var(--muted); font-size: 13px; white-space: pre-wrap; }
 
-    .control-grid{
-      display:grid;
-      gap:10px;
-      grid-template-columns: 1fr 1fr;
-      margin-top: 10px;
-    }
-    @media (max-width: 520px){
-      .control-grid{ grid-template-columns: 1fr; }
-    }
-    .rangeWrap{
-      border:1px solid rgba(255,255,255,0.10);
-      border-radius:14px;
-      padding: 10px 12px;
-      background: rgba(0,0,0,0.18);
-    }
+    .control-grid{ display:grid; gap:10px; grid-template-columns: 1fr 1fr; margin-top: 10px; }
+    @media (max-width: 520px){ .control-grid{ grid-template-columns: 1fr; } }
+    .rangeWrap{ border:1px solid rgba(255,255,255,0.10); border-radius:14px; padding: 10px 12px; background: rgba(0,0,0,0.18); }
     .rangeWrap input[type="range"]{ width:100%; }
 
-    /* 모달 */
-    .modal-backdrop{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 16px;
-      z-index: 10;
-    }
-    .modal{
-      width: min(940px, 100%);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(10,14,28,0.92);
-      backdrop-filter: blur(8px);
-      padding: 14px;
-      display:grid;
-      gap: 10px;
-    }
-    .modal h3{
-      margin:0;
-      font-size: 16px;
-      font-weight: 900;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
+    .modal-backdrop{ position: fixed; inset: 0; background: rgba(0,0,0,0.55); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 10; }
+    .modal{ width: min(940px, 100%); border: 1px solid var(--line); border-radius: 18px; background: rgba(10,14,28,0.92); backdrop-filter: blur(8px); padding: 14px; display:grid; gap: 10px; }
+    .modal h3{ margin:0; font-size: 16px; font-weight: 900; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .modal .q{
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 14px;
@@ -283,35 +115,13 @@
       gap:10px;
       align-items:flex-start;
     }
-    .choice:hover{
-      border-color: rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.06);
-    }
+    .choice:hover{ border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); }
     .choice input{ margin-top: 2px; }
-    .modal-actions{
-      display:flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
+    .modal-actions{ display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end; }
 
-    .feedback{
-      border-radius: 14px;
-      padding: 10px 12px;
-      white-space: pre-wrap;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,0.18);
-      color: rgba(255,255,255,0.86);
-      display:none;
-    }
-    .feedback.ok{
-      border-color: rgba(49,208,127,0.55);
-      background: rgba(49,208,127,0.10);
-    }
-    .feedback.bad{
-      border-color: rgba(255,90,114,0.55);
-      background: rgba(255,90,114,0.10);
-    }
+    .feedback{ border-radius: 14px; padding: 10px 12px; white-space: pre-wrap; border:1px solid var(--line); background: rgba(0,0,0,0.18); color: rgba(255,255,255,0.86); display:none; }
+    .feedback.ok{ border-color: rgba(49,208,127,0.55); background: rgba(49,208,127,0.10); }
+    .feedback.bad{ border-color: rgba(255,90,114,0.55); background: rgba(255,90,114,0.10); }
   </style>
 </head>
 
@@ -391,7 +201,6 @@
   </aside>
 </main>
 
-<!-- 모달 -->
 <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <h3 id="modalTitle">문제</h3>
@@ -410,9 +219,7 @@
 </div>
 
 <script>
-  /* ==========================
-     공통 유틸
-     ========================== */
+  // ===== 유틸 =====
   function shuffle(arr){
     const a = arr.slice();
     for(let i=a.length-1; i>0; i--){
@@ -432,13 +239,9 @@
     const pad = n => String(n).padStart(2,"0");
     return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
-  function codeBlock(s){
-    return "```\\n" + s + "\\n```";
-  }
+  function codeBlock(s){ return "```\\n" + s + "\\n```"; }
 
-  /* ==========================
-     학번 생성
-     ========================== */
+  // ===== 학번 =====
   const classSelect = document.getElementById("classSelect");
   const studentIdSelect = document.getElementById("studentId");
   const studentNameInput = document.getElementById("studentName");
@@ -464,17 +267,24 @@
   refreshStudentIds();
   classSelect.addEventListener("change", refreshStudentIds);
 
-  /* ==========================
-     TERMS 구성(정확히 150개)
-     - BASE_TERMS: 핵심(표/목록/폼/레이아웃 중심)
-     - EXTRA_TERMS: 확장(필수 파생)
-     ========================== */
+  // ===== 핵심 수정: confusions를 항상 배열로 정규화 =====
+  function normalizeConfusions(confusions){
+    if(Array.isArray(confusions)) return confusions.filter(Boolean).map(String);
+    if(typeof confusions === "string"){
+      return confusions.split(",").map(s=>s.trim()).filter(Boolean);
+    }
+    return [];
+  }
   function T(topic, term, def, example, pitfall, confusions, more){
-    return { topic, term, def, example, pitfall, confusions: confusions || [], more: more || "" };
+    return {
+      topic, term, def, example, pitfall,
+      confusions: normalizeConfusions(confusions),
+      more: (more || "")
+    };
   }
 
+  // ===== TERMS(150개) =====
   const BASE_TERMS = [
-    // HTML 폼/화면구현 핵심
     T("HTML","form","입력값을 묶는 영역","<form class='login-form'>...</form>","submit 동작 혼동(새로고침)","button type, submit event, preventDefault"),
     T("HTML","label for","label과 input을 연결","<label for='pw'>..</label><input id='pw'>","for/id 불일치로 연결 끊김","id, class, placeholder, name",
 `📌 보충설명
@@ -486,23 +296,16 @@
     T("HTML","placeholder","입력 안내 문구","placeholder='예: 1101'","label을 대체하지 못함","value, label, title, name"),
     T("HTML","required","필수 입력","<input required>","JS 검증과 함께 쓰면 안정","disabled, readonly, minlength, pattern"),
     T("HTML","button type","버튼 동작 종류","type='button' / 'submit'","form 안 기본 submit인 경우 주의","button, submit, reset, click"),
-    T("HTML","p.error","오류 메시지 출력 영역","<p class='error' aria-live='polite'></p>","min-height 없으면 화면 흔들림","textContent, aria-live, min-height, margin"),
-    T("HTML","a (anchor)","링크 태그","<a href='#'>등록하기</a>","href 없으면 접근성 불리","button, div, span, img"),
-    T("HTML","href","링크 목적지","href='page.html'","경로 실수 잦음","src, rel, id, class"),
-
-    // HTML 목록/표
+    T("HTML","aria-live","내용 변화 알림","aria-live='polite'","디자인 영향 없음","class, id, href, src"),
     T("HTML","ul","순서 없는 목록","<ul><li>항목</li></ul>","li 없이 쓰면 구조가 무너짐","ol, dl, table, div"),
     T("HTML","ol","순서 있는 목록","<ol><li>1</li></ol>","번호는 자동","ul, dl, p, table"),
     T("HTML","li","목록 항목","<li>항목</li>","ul/ol 밖에서 쓰면 의미가 어색","tr, td, dd, span"),
     T("HTML","table","표(테이블)","<table>...</table>","레이아웃용 남용 지양","div, grid, ul, section"),
     T("HTML","thead","표 머리","<thead>...</thead>","제목 영역 분리","tbody, tfoot, head, header"),
     T("HTML","tbody","표 본문","<tbody>...</tbody>","데이터 행 영역","thead, tfoot, body, main"),
-    T("HTML","tr","표의 행","<tr><td>값</td></tr>","td/th는 tr 안에","td, th, li, dd"),
     T("HTML","th","표의 제목 칸","<th scope='col'>이름</th>","scope로 의미 강화","td, h2, label, caption"),
     T("HTML","td","표의 데이터 칸","<td>값</td>","제목 칸은 th","th, tr, li, dt"),
-    T("HTML","caption","표 제목","<caption>성적표</caption>","표의 의미 설명","title, h2, label, alt"),
 
-    // CSS 레이아웃/정렬 핵심
     T("CSS","display: grid","2차원 배치","display:grid; gap:14px;","칸 기반 정렬에 강함","flex, float, inline, block"),
     T("CSS","grid-template-columns","열 구성","grid-template-columns: repeat(3, 1fr);","반응형은 minmax와 세트","grid-template-rows, width, max-width, fr"),
     T("CSS","gap","요소 사이 간격","gap: 12px;","margin 대신 쓰면 규칙 통일","margin, padding, space-between, border"),
@@ -512,130 +315,60 @@
     T("CSS","min-height","최소 높이","min-height: 18px;","오류영역 자리 확보","height, line-height, margin, padding"),
     T("CSS","border-radius","둥근 모서리","border-radius: 12px;","UI 완성도 체감↑","box-shadow, opacity, outline, filter"),
     T("CSS","box-sizing: border-box","크기 계산 안정화","*{box-sizing:border-box;}","기본(content-box)과 차이","content-box, width, padding, border"),
-    T("CSS","display: none","숨김(공간도 제거)",".hidden{display:none;}","자리도 사라져 화면이 당겨짐","visibility:hidden, opacity, hidden attribute, z-index",
-`📌 보충설명
-- display:none: 안 보임 + 자리(공간)도 없음
-- visibility:hidden: 안 보임 + 자리(공간) 유지
-- 수행평가 페이지 전환(hidden 토글)은 보통 display:none 계열이 깔끔함`),
+    T("CSS","display: none","숨김(공간도 제거)",".hidden{display:none;}","자리도 사라져 화면이 당겨짐","visibility:hidden, opacity, hidden attribute, z-index"),
     T("CSS","visibility: hidden","숨김(공간 유지)","visibility:hidden;","display:none과 다름","display:none, opacity, overflow, position"),
     T("CSS","flex-wrap","줄바꿈 허용","flex-wrap: wrap;","없으면 한 줄에 눌림","gap, overflow, width, align-items"),
 
-    // JS 수행평가 핵심
     T("JavaScript","querySelector","CSS 선택자로 1개 찾기","document.querySelector('.error')","id는 #, class는 .","getElementById, querySelectorAll, textContent, innerHTML"),
     T("JavaScript","getElementById","id로 찾기","document.getElementById('pw')","#을 붙이지 않음","querySelector, #id, .class, getElementsByClassName"),
     T("JavaScript","addEventListener","이벤트 연결","btn.addEventListener('click', fn)","fn()로 쓰면 즉시 실행","onclick, click event, handler, callback"),
-    T("JavaScript","textContent","텍스트 변경(안전)","error.textContent='입력하세요';","HTML 태그를 해석하지 않음","innerHTML, value, placeholder, className",
-`📌 보충설명
-- 오류 메시지는 textContent가 가장 안정적(태그 오타/보안 위험 ↓)
-- innerHTML은 태그를 해석하므로 ‘보여주기’는 좋지만 실수도 늘어남`),
+    T("JavaScript","textContent","텍스트 변경(안전)","error.textContent='입력하세요';","HTML 태그를 해석하지 않음","innerHTML, value, placeholder, className"),
     T("JavaScript","classList.add/remove","클래스 추가/제거","el.classList.add('hidden')","CSS .hidden이 있어야 효과","toggle, style.display, setAttribute, removeChild"),
     T("JavaScript","if / else","조건 분기","if(id===''){...} else {...}","= 와 === 혼동","for, while, switch, try"),
     T("JavaScript","preventDefault","기본 동작 막기","e.preventDefault()","submit 새로고침 방지","stopPropagation, return, break, continue"),
   ];
 
-  // 확장 용어(표/목록/폼/레이아웃 중심으로 “많이”)
-  const EXTRA_TERMS = [
-    // HTML 구조/시맨틱
-    ["HTML","doctype","문서가 HTML임을 선언","<!doctype html>","없으면 구버전 모드 가능","meta charset, title, head, body"],
-    ["HTML","meta charset","문자 인코딩 설정","<meta charset='utf-8'>","없으면 한글 깨짐 가능","title, link, script, style"],
-    ["HTML","meta viewport","모바일 화면 비율 설정","<meta name='viewport' content='width=device-width, initial-scale=1'>","없으면 모바일 화면 어색","charset, link, script, style"],
-    ["HTML","header","페이지 머리말","<header>...</header>","head와 다름","head, nav, main, footer"],
-    ["HTML","nav","메뉴 구역","<nav><a>..</a></nav>","링크 묶음이면 nav","header, section, aside, div"],
-    ["HTML","main","본문 핵심","<main>...</main>","보통 1개","section, article, body, div"],
-    ["HTML","section","의미 있는 구역","<section><h2>..</h2></section>","제목과 함께","div, article, span, main"],
-    ["HTML","article","독립 콘텐츠","<article>...</article>","단순 배치면 section/div","section, aside, div, main"],
-    ["HTML","aside","부가 정보","<aside>팁</aside>","핵심이면 main","nav, footer, article, section"],
-    ["HTML","footer","바닥글","<footer>©</footer>","하단 정보","header, nav, main, aside"],
-    ["HTML","div","의미 없는 블록","<div class='box'>","구조 의미 약화","section, article, span, main"],
-    ["HTML","span","의미 없는 인라인","<span class='tag'>","width/height 기대 주의","div, p, section, main"],
-    ["HTML","h1~h6","제목(계층)","<h1>제목</h1>","크기용이 아니라 구조용","p, span, b, title"],
-    ["HTML","p","문단","<p>설명</p>","p 중첩 금지","div, span, h2, label"],
-    ["HTML","strong","중요 강조","<strong>중요</strong>","b와 의미 다름","b, em, span, mark"],
-    ["HTML","em","강세 강조","<em>강조</em>","i와 의미 다름","i, strong, span, b"],
-    ["HTML","br","줄바꿈","<br>","문단은 p","hr, p, div, span"],
-    ["HTML","hr","구분선","<hr>","남발 지양","br, border, div, line-break"],
-    ["HTML","img","이미지","<img src='a.png' alt='설명'>","alt 고려","video, figure, a, canvas"],
-    ["HTML","src","파일 경로","src='logo.png'","상대경로 실수","href, rel, type, name"],
-    ["HTML","alt","대체 텍스트","alt='로고'","접근성","title, aria-label, caption, placeholder"],
-    ["HTML","aria-live","내용 변화 알림","aria-live='polite'","디자인 영향 없음","class, id, href, src"],
-    ["HTML","aria-label","요소 의미 제공","aria-label='닫기'","아이콘 버튼에 유용","alt, title, name, role"],
-
-    // 폼 확장
-    ["HTML","action","폼 전송 주소","<form action='/login'>","오픈북 실습에선 생략 가능","method, href, src, name"],
-    ["HTML","method","전송 방식","method='post'","비번은 보통 POST","action, enctype, target, rel"],
-    ["HTML","minlength","최소 글자수","minlength='4'","type=number에선 주의","maxlength, min, max, pattern"],
-    ["HTML","maxlength","최대 글자수","maxlength='10'","입력 제한","minlength, max, pattern, value"],
-    ["HTML","pattern","정규식 제한","pattern='[0-9]+'","초보에겐 어려움","placeholder, value, name, type"],
-    ["HTML","readonly","읽기 전용","readonly","전송은 되지만 수정 불가","disabled, required, selected, checked"],
-    ["HTML","disabled","비활성","disabled","전송에서 제외될 수 있음","readonly, hidden, display:none, required"],
-    ["HTML","autocomplete","자동완성","autocomplete='off'","환경별 차이","autofocus, required, pattern, placeholder"],
-    ["HTML","autofocus","처음 포커스","autofocus","1개만 쓰는 게 자연","required, readonly, disabled, selected"],
-    ["HTML","type='email'","이메일 입력","<input type='email'>","기본 검증","text, number, tel, url"],
-    ["HTML","type='number'","숫자 입력","<input type='number'>","학번은 text가 안전할 때도","text, range, tel, email"],
-    ["HTML","type='checkbox'","체크박스","<input type='checkbox'>","checked로 상태","radio, select, option, button"],
-    ["HTML","type='radio'","라디오","<input type='radio' name='g'>","name이 같아야 그룹","checkbox, select, option, button"],
-    ["HTML","checked","체크 상태","checked","checkbox/radio","selected, required, disabled, readonly"],
-    ["HTML","selected","선택 상태","<option selected>","select 기본값","checked, required, disabled, readonly"],
-    ["HTML","fieldset","폼 묶음","<fieldset>...</fieldset>","그룹화","div, section, form, legend"],
-    ["HTML","legend","fieldset 제목","<legend>회원정보</legend>","label과 다름","label, h2, title, caption"],
-    ["HTML","type='reset'","폼 초기화","<button type='reset'>","의도치 초기화 주의","button, submit, checkbox, radio"],
-    ["HTML","datalist","입력 추천 목록","<datalist id='list'>...</datalist>","select와 다름","select, option, ul, li"],
-
-    // 목록/표 확장
+  // 자동으로 150개까지 채우는 풀(표/목록/폼/레이아웃 위주)
+  const AUTO = [
+    ["HTML","id","고유 식별자","id='pw'","중복 id는 선택 꼬임","class, name, type, value"],
+    ["HTML","class","분류(여러 개 가능)","class='btn primary'","공백으로 여러 클래스","id, name, value, href"],
+    ["HTML","name","전송 필드 이름","name='studentId'","JS 선택은 id/class가 흔함","id, class, value, placeholder"],
+    ["HTML","value","입력값","input.value","div엔 value 없음","textContent, innerHTML, placeholder, name"],
+    ["HTML","type='submit'","제출 버튼","<button type='submit'>","새로고침/이동","button, reset, click, preventDefault"],
+    ["HTML","type='button'","클릭용 버튼","<button type='button'>","submit과 혼동","submit, reset, click, form"],
     ["HTML","dl","정의 목록","<dl><dt>용어</dt><dd>설명</dd></dl>","dt=용어 dd=설명","ul, ol, table, p"],
     ["HTML","dt","정의 목록 용어","<dt>HTML</dt>","dd와 짝","dd, li, th, td"],
     ["HTML","dd","정의 목록 설명","<dd>마크업</dd>","dt와 짝","dt, li, td, th"],
-    ["HTML","tfoot","표 바닥(요약)","<tfoot>합계</tfoot>","요약/합계","thead, tbody, footer, caption"],
-    ["HTML","scope","th 범위","scope='row' / 'col'","접근성 도움","colspan, rowspan, caption, span"],
+    ["HTML","caption","표 제목","<caption>성적표</caption>","표의 의미 설명","title, h2, label, alt"],
     ["HTML","colspan","열 병합","colspan='2'","표 구조 깨지기 쉬움","rowspan, scope, thead, tbody"],
     ["HTML","rowspan","행 병합","rowspan='2'","표 구조 주의","colspan, scope, thead, tbody"],
-
-    // CSS 레이아웃 확장
     ["CSS","display: flex","1차원 배치","display:flex; gap:10px;","주축/교차축 혼동","grid, block, inline, float"],
     ["CSS","flex-direction","방향","flex-direction: column;","row/column 혼동","justify-content, align-items, gap, wrap"],
     ["CSS","align-items","교차축 정렬","align-items:center;","세로 정렬","justify-content, text-align, margin auto, line-height"],
     ["CSS","justify-content","주축 정렬","justify-content:center;","row/column에 따라 달라짐","align-items, text-align, margin auto, line-height"],
-    ["CSS","flex-wrap","줄바꿈","flex-wrap: wrap;","없으면 눌림","gap, overflow, width, align-items"],
     ["CSS","minmax()","최소~최대","minmax(100px, 1fr)","반응형 핵심","max-width, min-width, auto, fr"],
     ["CSS","auto-fill","자동 채움","repeat(auto-fill, minmax(...))","카드덱에 유용","auto-fit, repeat, minmax, fr"],
     ["CSS","auto-fit","가능하면 꽉","auto-fit + minmax","빈 칸 처리 차이","auto-fill, repeat, minmax, fr"],
     ["CSS","fr","남은 공간 비율","1fr 2fr","grid에서 사용","px, %, em, rem"],
-    ["CSS","width: 100%","너비 꽉","button{width:100%;}","inline엔 제약","max-width, height, inline, block"],
+    ["CSS","border","테두리","border:1px solid #ccc;","크기에 영향","outline, box-shadow, padding, margin"],
+    ["CSS","background-color","배경색","background-color:#fff;","가독성 대비","color, opacity, border-color, filter"],
+    ["CSS","color","글자색","color:#333;","대비","background-color, opacity, border-color, filter"],
+    ["CSS","font-size","글자크기","font-size:14px;","단위 혼동","font-weight, line-height, rem, em"],
+    ["CSS","font-weight","굵기","font-weight:700;","의미는 strong","strong, b, em, opacity"],
     ["CSS","line-height","줄 간격","line-height:1.4;","가독성","font-size, padding, margin, letter-spacing"],
     ["CSS","text-align","텍스트 정렬","text-align:center;","블록 가운데는 margin auto","margin auto, justify-content, align-items, position"],
-    ["CSS",":hover","마우스 올림","button:hover{...}","모바일 체감 다름",":active, :focus, :visited, :checked"],
-    ["CSS",":focus","포커스","input:focus{outline:...}","키보드 사용성",":hover, :active, :checked, :visited"],
-    ["CSS","outline","포커스 테두리","outline: 2px solid;","border와 다름","border, box-shadow, padding, margin"],
-    ["CSS","position: relative","기준점","position:relative;","absolute 기준", "absolute, fixed, sticky, static"],
-    ["CSS","position: absolute","기준 기준 배치","position:absolute; top:0;","기준 없으면 페이지 기준","relative, fixed, sticky, static"],
-    ["CSS","position: fixed","화면 고정","position:fixed; top:0;","스크롤해도 고정","sticky, absolute, relative, static"],
-    ["CSS","position: sticky","스크롤 붙음","position:sticky; top:0;","부모 overflow 영향","fixed, absolute, relative, static"],
-    ["CSS","z-index","겹침 순서","z-index:10;","position과 함께","opacity, display, overflow, transform"],
-    ["CSS","overflow: hidden","넘침 숨김","overflow:hidden;","스크롤 사라짐","auto, scroll, wrap, clip"],
     ["CSS","overflow: auto","필요시 스크롤","overflow:auto;","테이블/목록에 유용","hidden, scroll, wrap, clip"],
-    ["CSS","box-shadow","그림자","box-shadow: 0 6px 20px rgba(...)","남발 지양","border, outline, opacity, filter"],
-    ["CSS","opacity","투명도","opacity:0.7;","클릭 여부는 별개","visibility, display, filter, z-index"],
-
-    // JS 확장(수행평가에 자주)
+    ["CSS","overflow: hidden","넘침 숨김","overflow:hidden;","스크롤 사라짐","auto, scroll, wrap, clip"],
     ["JavaScript","querySelectorAll","여러 개 찾기","document.querySelectorAll('.field')","NodeList 반환","querySelector, getElementById, forEach, map"],
-    ["JavaScript","NodeList","여러 요소 묶음","document.querySelectorAll(...)","배열과 완전 동일은 아님","array, forEach, map, length"],
     ["JavaScript","forEach","반복","list.forEach(x=>...);","중간 중단 어렵","map, for, filter, reduce"],
-    ["JavaScript","event object","이벤트 정보","(e)=>{...}","preventDefault와 세트","this, target, currentTarget, listener"],
-    ["JavaScript","click event","클릭 이벤트","'click'","클릭 시 실행","input, keydown, load, submit"],
-    ["JavaScript","submit event","제출 이벤트","form.addEventListener('submit',...)","preventDefault 필요","click, input, change, keydown"],
     ["JavaScript","classList.toggle","토글","el.classList.toggle('hidden')","상태 전환","add, remove, replace, contains"],
     ["JavaScript","innerHTML","HTML 문자열 변경","el.innerHTML='<b>OK</b>'","보안/오타 위험","textContent, value, appendChild, createElement"],
-    ["JavaScript","value","입력값","input.value","div엔 없음","textContent, innerHTML, placeholder, name"],
-    ["JavaScript","if / else","조건 분기","if(x){...} else {...}","조건 실수","for, while, switch, try"],
-    ["JavaScript","=== (strict)","엄격 비교","a===b","타입까지","==, =, !==, &&"],
-    ["JavaScript","Math.random","랜덤","Math.random()","정수는 floor","Math.floor, round, ceil, parseInt"],
-    ["JavaScript","Math.floor","내림","Math.floor(3.9)","랜덤 정수","round, ceil, parseInt, Number"],
-    ["JavaScript","localStorage","저장소","localStorage.setItem('k','v')","문자열만","sessionStorage, cookie, file, database"],
+    ["JavaScript","=== (strict)","엄격 비교","a===b","타입까지 비교","==, =, !==, &&"],
+    ["JavaScript","localStorage","저장소","localStorage.setItem('k','v')","문자열만 저장(JSON 필요)","sessionStorage, cookie, file, database"],
     ["JavaScript","JSON.stringify","객체→문자열","JSON.stringify(obj)","저장 전 변환","JSON.parse, toString, String, Number"],
-    ["JavaScript","JSON.parse","문자열→객체","JSON.parse(text)","형식 깨지면 에러","stringify, split, join, eval"],
-  ].map(x => T(x[0],x[1],x[2],x[3],x[4], String(x[5]||"").split(",").map(s=>s.trim()).filter(Boolean)));
+    ["JavaScript","JSON.parse","문자열→객체","JSON.parse(text)","형식 깨지면 에러","stringify, split, join, eval"]
+  ].map(x=> T(x[0],x[1],x[2],x[3],x[4],x[5]));
 
-  // 150개 맞추기: BASE + EXTRA를 합치고 중복 term 제거 후, 부족하면 자동 생성(레이아웃/표/목록/폼 파생)
   function uniqueByTerm(items){
     const seen = new Set();
     const out = [];
@@ -648,61 +381,18 @@
     return out;
   }
 
-  const AUTO_FILL_POOL = [
-    // HTML 파생
-    ["HTML","type='text'","텍스트 입력","<input type='text'>","학번은 text가 안전할 때도","type='number', placeholder, required, pattern"],
-    ["HTML","type='email'","이메일 입력","<input type='email'>","기본 검증 제공","text, tel, url, pattern"],
-    ["HTML","type='number'","숫자 입력","<input type='number' min='1' max='10'>","학번처럼 앞자리 0은 주의","text, minlength, maxlength, pattern"],
-    ["HTML","min","최소값","min='1'","number에서 사용","max, minlength, maxlength, pattern"],
-    ["HTML","max","최대값","max='10'","number에서 사용","min, minlength, maxlength, pattern"],
-    ["HTML","target","링크 열기 방식","target='_blank'","새 창 열림(경험 고려)","href, rel, download, id"],
-    ["HTML","rel","연결 관계","rel='stylesheet'","link에서 자주","href, src, type, name"],
-    // 목록/표 추가 파생
-    ["HTML","tbody row count","tbody 행 수","<tbody><tr>...</tr></tbody>","thead/tbody 혼동","thead, tbody, tr, th"],
-    ["HTML","table border","표 테두리","border: 1px solid","CSS로 처리 권장","border, outline, box-shadow, table"],
-    // CSS 파생
-    ["CSS","display: block","블록 요소","div, p 기본","width/height 적용 쉬움","inline, inline-block, flex, grid"],
-    ["CSS","display: inline","인라인 요소","span, a 기본","width/height 제약","block, inline-block, flex, grid"],
-    ["CSS","display: inline-block","인라인+크기","display:inline-block;","줄 흐름 유지","inline, block, flex, grid"],
-    ["CSS","border","테두리","border: 1px solid #ccc;","크기에 영향","outline, box-shadow, padding, margin"],
-    ["CSS","background-color","배경색","background-color:#fff;","가독성 대비","color, opacity, border, filter"],
-    ["CSS","color","글자색","color:#333;","대비","background-color, opacity, border-color, filter"],
-    ["CSS","font-size","글자크기","font-size:14px;","단위 혼동","font-weight, line-height, rem, em"],
-    ["CSS","font-weight","굵기","font-weight:700;","의미는 strong","strong, b, em, opacity"],
-    // JS 파생
-    ["JavaScript","return","함수 반환","return true;","뒤 코드는 실행 X","break, continue, console.log, yield"],
-    ["JavaScript","const","재할당 불가","const MAX=10;","참조는 바뀔 수 있음","let, var, freeze, static"],
-    ["JavaScript","let","재할당 가능","let score=0;","블록 스코프","var, const, function, object"],
-  ].map(x => T(x[0],x[1],x[2],x[3],x[4], String(x[5]||"").split(",").map(s=>s.trim()).filter(Boolean)));
-
-  function autoFillTo150(items){
-    let out = uniqueByTerm(items);
-    // 부족하면 AUTO_FILL_POOL로 채우기
-    for(const it of AUTO_FILL_POOL){
-      if(out.length >= 150) break;
-      const key = it.term.toLowerCase();
-      if(out.some(x=> x.term.toLowerCase() === key)) continue;
-      out.push(it);
-    }
-    // 그래도 부족하면 마지막: "레이아웃/폼/표/목록" 파생을 자동 생성
-    const genTopics = ["HTML","CSS","JavaScript"];
-    let idx = 1;
-    while(out.length < 150){
-      const topic = genTopics[out.length % genTopics.length];
-      const term = `${topic.toLowerCase()}-extra-${idx}`;
-      out.push(T(topic, term, "추가 필수 용어(확장)", "예시: 수업에서 추가로 확인", "혼동 주의", ["기본 용어와 비교"]));
-      idx++;
-    }
-    // 초과면 자르기
-    if(out.length > 150) out = out.slice(0,150);
-    return out;
+  let TERMS = uniqueByTerm([...BASE_TERMS, ...AUTO]);
+  // 150개까지 채우기(패턴 용어 자동 생성)
+  let n = 1;
+  const topics = ["HTML","CSS","JavaScript"];
+  while(TERMS.length < 150){
+    const topic = topics[TERMS.length % topics.length];
+    TERMS.push(T(topic, `${topic.toLowerCase()}-extra-${n}`, "추가 필수 용어(확장)", "예시: 수업에서 추가로 확인", "혼동 주의", "기본 용어와 비교"));
+    n++;
   }
+  TERMS = TERMS.slice(0, 150);
 
-  const TERMS = autoFillTo150([...BASE_TERMS, ...EXTRA_TERMS]);
-
-  /* ==========================
-     탭(A/B/C/D)
-     ========================== */
+  // ===== 탭 =====
   const tabsEl = document.getElementById("tabs");
   const pillType = document.getElementById("pillType");
   let viewType = "ALL";
@@ -724,26 +414,17 @@
   }
   renderTabs();
   pillType.textContent = "유형: " + viewType;
-
   function effectiveType(){
     return (viewType === "A" || viewType === "B" || viewType === "C" || viewType === "D") ? viewType : "A";
   }
 
-  /* ==========================
-     상태 저장
-     ========================== */
-  const LS_KEY = "term_mcq_final_150_supp_v1";
+  // ===== 상태 저장 =====
+  const LS_KEY = "term_mcq_fixed_confusions_v1";
   function loadState(){
-    try{
-      const raw = localStorage.getItem(LS_KEY);
-      return raw ? JSON.parse(raw) : null;
-    }catch(e){
-      return null;
-    }
+    try{ const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; }
+    catch(e){ return null; }
   }
-  function saveState(state){
-    localStorage.setItem(LS_KEY, JSON.stringify(state));
-  }
+  function saveState(state){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
   function makeFreshState(){
     const per = {};
     TERMS.forEach(t=> per[t.term] = { state:"new", wrongCount:0, correct:false, lastTime:"-" });
@@ -757,29 +438,24 @@
     return "어려움";
   }
 
-  /* ==========================
-     보충설명 생성
-     ========================== */
+  // ===== 보충설명(안전장치: confusions를 다시 배열로 보정) =====
   function buildSupplement(termObj){
-    if(termObj.more && String(termObj.more).trim()){
-      return String(termObj.more).trim();
-    }
+    const conf = normalizeConfusions(termObj.confusions);
+    if(termObj.more && String(termObj.more).trim()) return String(termObj.more).trim();
     const lines = [];
     lines.push("📌 보충설명");
     lines.push(`- 핵심 정의: ${termObj.def || "(정의 없음)"}`);
     if(termObj.example) lines.push(`- 예시/형태: ${termObj.example}`);
     if(termObj.pitfall) lines.push(`- 자주 하는 실수: ${termObj.pitfall}`);
-    if(termObj.confusions && termObj.confusions.length){
-      lines.push(`- 헷갈림 주의: ${termObj.confusions.slice(0,4).join(" / ")}`);
+    if(conf.length){
+      lines.push(`- 헷갈림 주의: ${conf.slice(0,4).join(" / ")}`);
       lines.push("  → 구분 팁: ‘무엇을 하는가(역할)’가 다르면 다른 개념!");
     }
     lines.push("✅ 다음 행동(자기주도): 같은 용어로 A형(정의) → C형(실수)로 한 번 더 풀어 보기");
     return lines.join("\n");
   }
 
-  /* ==========================
-     보통(수행평가형) 코드 템플릿
-     ========================== */
+  // ===== 보통 코드(수행평가형) =====
   function mediumHTML(){
     return `
 <main class="container loginPage">
@@ -789,19 +465,16 @@
         <label for="studentId">학번</label>
         <input id="studentId" type="text" placeholder="예: 1101">
       </div>
-
       <div class="field">
         <label for="pw">비밀번호</label>
         <input id="pw" type="password">
       </div>
-
       <button id="btnLogin" type="button">로그인</button>
       <p class="error" aria-live="polite"></p>
       <a class="help" href="#">등록하기</a>
     </form>
   </section>
 </main>
-
 <main class="container mainPage hidden">
   <section class="card">
     <h2>메인 화면</h2>
@@ -842,13 +515,10 @@ btnLogin.addEventListener("click", () => {
   function pickMediumCode(termObj){
     if(termObj.topic === "HTML") return mediumHTML();
     if(termObj.topic === "CSS") return mediumCSS();
-    if(termObj.topic === "JavaScript") return mediumJS();
-    return mediumHTML();
+    return mediumJS();
   }
 
-  /* ==========================
-     어려움 반례 짝(강화)
-     ========================== */
+  // ===== 반례 =====
   const HARD_PAIRS = [
     ["display: none","visibility: hidden"],
     ["textContent","innerHTML"],
@@ -876,7 +546,7 @@ btnLogin.addEventListener("click", () => {
     const def = termObj.def;
     const ex = termObj.example;
     const pit = termObj.pitfall;
-    const conf = termObj.confusions || [];
+    const conf = normalizeConfusions(termObj.confusions);
 
     const others = shuffle(TERMS.filter(x=> x.term !== term)).slice(0, 12);
     const otherDefs = others.map(o=> o.def);
@@ -884,7 +554,6 @@ btnLogin.addEventListener("click", () => {
 
     let stem="", correct="", distractors=[];
 
-    // 쉬움: 정의(정의 보기)
     if(difficulty === "쉬움"){
       stem = `[쉬움] (${termObj.topic}) '${term}'의 뜻(정의)으로 가장 알맞은 것은?`;
       correct = def;
@@ -896,7 +565,6 @@ btnLogin.addEventListener("click", () => {
       ];
     }
 
-    // 보통: 수행평가형 코드
     if(difficulty === "보통"){
       const code = pickMediumCode(termObj);
       if(type === "A"){
@@ -904,7 +572,7 @@ btnLogin.addEventListener("click", () => {
         correct = term;
         distractors = [...conf, ...otherTerms];
       } else if(type === "B"){
-        stem = `[보통·B(예시)] 아래 수행평가형 코드에서 '${term}'과(와) 직접 연결되는 이유(설명)는?\n${codeBlock(code)}`;
+        stem = `[보통·B(예시)] 아래 수행평가형 코드에서 '${term}'과(와) 직접 연결되는 설명(정의)은?\n${codeBlock(code)}`;
         correct = `핵심 정의: ${def}`;
         distractors = [
           ...otherDefs.map(d=>`핵심 정의: ${d}`),
@@ -922,7 +590,6 @@ btnLogin.addEventListener("click", () => {
       }
     }
 
-    // 어려움: 반례 강하게
     if(difficulty === "어려움"){
       let pair = HARD_PAIRS.find(p => p[0].toLowerCase()===term.toLowerCase() || p[1].toLowerCase()===term.toLowerCase());
       if(!pair && conf.length) pair = [term, conf[0]];
@@ -984,89 +651,17 @@ btnLogin.addEventListener("click", () => {
     return { stem, choices, answerIndex, explainWrong, whyCorrect, difficulty };
   }
 
-  /* ==========================
-     덱 렌더링
-     ========================== */
+  // ===== 렌더링/모달 =====
   const deckEl = document.getElementById("deck");
   const toast = document.getElementById("toast");
   const pillProgress = document.getElementById("pillProgress");
   const pillCorrect = document.getElementById("pillCorrect");
   const pillWrong = document.getElementById("pillWrong");
   const btnSave = document.getElementById("btnSave");
+  const btnReset = document.getElementById("btnReset");
+  const rangeMin = document.getElementById("rangeMin");
+  const minLabel = document.getElementById("minLabel");
 
-  function computeStats(){
-    const total = TERMS.length;
-    let correct = 0;
-    let wrong = 0;
-    for(const t of TERMS){
-      const st = appState.per[t.term];
-      if(st?.correct) correct++;
-      wrong += (st?.wrongCount || 0);
-    }
-
-    pillProgress.textContent = `진행: ${correct} / ${total}`;
-    pillCorrect.textContent = `정답: ${correct}`;
-    pillWrong.textContent = `오답: ${wrong}`;
-
-    const allCorrect = (correct === total);
-    btnSave.disabled = !allCorrect;
-
-    if(allCorrect){
-      toast.textContent =
-`✅ 모두 정답 완료!
-‘결과 저장’ 버튼을 눌러 제출 파일을 저장하세요.
-(저장창에서 바탕화면 선택)`;
-    }
-  }
-
-  function filteredTerms(){
-    const q = searchInput.value.trim().toLowerCase();
-    return TERMS.filter(t=>{
-      if(!q) return true;
-      return t.term.toLowerCase().includes(q) || t.topic.toLowerCase().includes(q);
-    });
-  }
-
-  function renderDeck(){
-    deckEl.innerHTML = "";
-    const list = filteredTerms();
-
-    for(const t of list){
-      const st = appState.per[t.term] || { state:"new", wrongCount:0, correct:false, lastTime:"-" };
-
-      let visual = st.state;
-      if(!st.correct && st.wrongCount > 0) visual = "wrong";
-      if(!st.correct && st.wrongCount === 0 && st.state === "try") visual = "try";
-      if(st.correct) visual = "correct";
-
-      const diff = difficultyForTerm(st);
-      const stateLabel =
-        st.correct ? "정답" :
-        (st.wrongCount > 0 ? `오답 ${st.wrongCount} · ${diff}` :
-          (st.state==="try" ? `시도 · ${diff}` : `미시도 · ${diff}`));
-
-      const card = document.createElement("div");
-      card.className = "card";
-      card.dataset.term = t.term;
-      card.dataset.state = visual;
-      card.innerHTML = `
-        <div class="topic">${escapeHtml(t.topic)}</div>
-        <div class="term">${escapeHtml(t.term)}</div>
-        <div class="state">${escapeHtml(stateLabel)}</div>
-      `;
-      card.addEventListener("click", ()=> openQuestion(t.term));
-      deckEl.appendChild(card);
-    }
-
-    computeStats();
-    saveState(appState);
-  }
-
-  searchInput.addEventListener("input", renderDeck);
-
-  /* ==========================
-     모달 + 보충설명 토글
-     ========================== */
   const modalBackdrop = document.getElementById("modalBackdrop");
   const modalTitle = document.getElementById("modalTitle");
   const qStem = document.getElementById("qStem");
@@ -1084,6 +679,59 @@ btnLogin.addEventListener("click", () => {
   let lastSupplementText = "";
   let lastShortCorrectText = "";
   let supplementShown = false;
+
+  function computeStats(){
+    const total = TERMS.length;
+    let correct = 0;
+    let wrong = 0;
+    for(const t of TERMS){
+      const st = appState.per[t.term];
+      if(st?.correct) correct++;
+      wrong += (st?.wrongCount || 0);
+    }
+    pillProgress.textContent = `진행: ${correct} / ${total}`;
+    pillCorrect.textContent = `정답: ${correct}`;
+    pillWrong.textContent = `오답: ${wrong}`;
+    btnSave.disabled = !(correct === total);
+  }
+
+  function filteredTerms(){
+    const q = searchInput.value.trim().toLowerCase();
+    return TERMS.filter(t=>{
+      if(!q) return true;
+      return t.term.toLowerCase().includes(q) || t.topic.toLowerCase().includes(q);
+    });
+  }
+
+  function renderDeck(){
+    deckEl.innerHTML = "";
+    const list = filteredTerms();
+    for(const t of list){
+      const st = appState.per[t.term] || { state:"new", wrongCount:0, correct:false, lastTime:"-" };
+      let visual = st.state;
+      if(!st.correct && st.wrongCount > 0) visual = "wrong";
+      if(!st.correct && st.wrongCount === 0 && st.state === "try") visual = "try";
+      if(st.correct) visual = "correct";
+      const diff = difficultyForTerm(st);
+      const stateLabel = st.correct ? "정답" :
+        (st.wrongCount > 0 ? `오답 ${st.wrongCount} · ${diff}` :
+          (st.state==="try" ? `시도 · ${diff}` : `미시도 · ${diff}`));
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.term = t.term;
+      card.dataset.state = visual;
+      card.innerHTML = `
+        <div class="topic">${escapeHtml(t.topic)}</div>
+        <div class="term">${escapeHtml(t.term)}</div>
+        <div class="state">${escapeHtml(stateLabel)}</div>
+      `;
+      card.addEventListener("click", ()=> openQuestion(t.term));
+      deckEl.appendChild(card);
+    }
+    computeStats();
+    saveState(appState);
+  }
 
   function openQuestion(term){
     const nm = studentNameInput.value.trim();
@@ -1114,7 +762,6 @@ btnLogin.addEventListener("click", () => {
     selectedIndex = null;
 
     feedbackEl.style.display = "none";
-    feedbackEl.className = "feedback";
     btnRetry.style.display = "none";
     btnMore.style.display = "none";
     btnCheck.disabled = false;
@@ -1131,10 +778,8 @@ btnLogin.addEventListener("click", () => {
     currentQuestion.choices.forEach((text, idx)=>{
       const row = document.createElement("label");
       row.className = "choice";
-      row.innerHTML = `
-        <input type="radio" name="mcq" value="${idx}">
-        <div>${idx+1}. ${escapeHtml(text)}</div>
-      `;
+      row.innerHTML = `<input type="radio" name="mcq" value="${idx}">
+        <div>${idx+1}. ${escapeHtml(text)}</div>`;
       row.addEventListener("click", ()=> selectedIndex = idx);
       choicesEl.appendChild(row);
     });
@@ -1150,8 +795,6 @@ btnLogin.addEventListener("click", () => {
     currentTerm = null;
     currentQuestion = null;
     selectedIndex = null;
-    btnMore.style.display = "none";
-    btnRetry.style.display = "none";
   }
 
   btnClose.addEventListener("click", closeModal);
@@ -1160,15 +803,12 @@ btnLogin.addEventListener("click", () => {
   btnMore.addEventListener("click", ()=>{
     if(!lastSupplementText) return;
     supplementShown = !supplementShown;
-
+    feedbackEl.style.display = "block";
+    feedbackEl.className = "feedback ok";
     if(supplementShown){
-      feedbackEl.style.display = "block";
-      feedbackEl.className = "feedback ok";
       feedbackEl.textContent = lastShortCorrectText + "\n\n" + lastSupplementText;
       btnMore.textContent = "📘 보충설명 숨기기";
     }else{
-      feedbackEl.style.display = "block";
-      feedbackEl.className = "feedback ok";
       feedbackEl.textContent = lastShortCorrectText;
       btnMore.textContent = "📘 보충설명 보기";
     }
@@ -1191,13 +831,11 @@ btnLogin.addEventListener("click", () => {
       st.state = "correct";
 
       const tObj = TERMS.find(x=> x.term === currentTerm);
-
       lastShortCorrectText =
 `✅ 정답!
 왜 맞는지: ${currentQuestion.whyCorrect}
 
 (보충설명을 보고 싶으면 아래 버튼을 누르세요.)`;
-
       lastSupplementText = buildSupplement(tObj);
 
       feedbackEl.style.display = "block";
@@ -1205,9 +843,6 @@ btnLogin.addEventListener("click", () => {
       feedbackEl.textContent = lastShortCorrectText;
 
       btnMore.style.display = "inline-block";
-      btnMore.textContent = "📘 보충설명 보기";
-      supplementShown = false;
-
       btnRetry.style.display = "none";
       btnCheck.disabled = true;
 
@@ -1215,7 +850,6 @@ btnLogin.addEventListener("click", () => {
       return;
     }
 
-    // 오답
     st.wrongCount += 1;
     st.state = "wrong";
 
@@ -1252,10 +886,6 @@ btnLogin.addEventListener("click", () => {
     btnRetry.style.display = "none";
     btnMore.style.display = "none";
 
-    lastSupplementText = "";
-    lastShortCorrectText = "";
-    supplementShown = false;
-
     modalTitle.textContent = `🧩 (${tObj.topic}) ${tObj.term} · ${type}형 · ${currentQuestion.difficulty}`;
     qStem.textContent = currentQuestion.stem;
 
@@ -1263,22 +893,14 @@ btnLogin.addEventListener("click", () => {
     currentQuestion.choices.forEach((text, idx)=>{
       const row = document.createElement("label");
       row.className = "choice";
-      row.innerHTML = `
-        <input type="radio" name="mcq" value="${idx}">
-        <div>${idx+1}. ${escapeHtml(text)}</div>
-      `;
+      row.innerHTML = `<input type="radio" name="mcq" value="${idx}">
+        <div>${idx+1}. ${escapeHtml(text)}</div>`;
       row.addEventListener("click", ()=> selectedIndex = idx);
       choicesEl.appendChild(row);
     });
   });
 
-  /* ==========================
-     저장 / 초기화 / 밀도
-     ========================== */
-  const btnReset = document.getElementById("btnReset");
-  const rangeMin = document.getElementById("rangeMin");
-  const minLabel = document.getElementById("minLabel");
-
+  // ===== 저장/초기화/밀도 =====
   rangeMin.addEventListener("input", ()=>{
     const v = rangeMin.value;
     minLabel.textContent = v;
@@ -1336,7 +958,6 @@ btnLogin.addEventListener("click", () => {
     toast.textContent = "저장창이 뜨면 위치를 ‘바탕화면’으로 선택하고 저장하세요.";
   });
 
-  // 상태 저장(학생 정보)
   studentNameInput.addEventListener("input", ()=>{ appState.name = studentNameInput.value.trim(); saveState(appState); });
   studentIdSelect.addEventListener("change", ()=>{ appState.studentId = studentIdSelect.value; saveState(appState); });
   classSelect.addEventListener("change", ()=>{
@@ -1346,15 +967,12 @@ btnLogin.addEventListener("click", () => {
     saveState(appState);
   });
 
-  /* ==========================
-     시작 로드
-     ========================== */
-  const saved = appState;
-  if(saved){
-    studentNameInput.value = saved.name || "";
-    classSelect.value = String(saved.cls || 11);
+  // 시작 로드
+  if(appState){
+    studentNameInput.value = appState.name || "";
+    classSelect.value = String(appState.cls || 11);
     refreshStudentIds();
-    if(saved.studentId) studentIdSelect.value = saved.studentId;
+    if(appState.studentId) studentIdSelect.value = appState.studentId;
   }
 
   renderDeck();
