@@ -817,10 +817,10 @@ btnLogin.addEventListener("click", () => {
       stem = `[쉬움] (${termObj.topic}) '${term}'의 뜻(정의)으로 가장 알맞은 것은?`;
       correct = def;
       distractors = shuffle([
-        ...otherDefs,
-        `(${term})는 인터넷이 있어야 동작한다`,
-        `(${term})는 무조건 CSS 기능이다`,
-        `(${term})는 무조건 JS 문법이다`
+      ...otherDefs,
+      `(${term})는 인터넷이 있어야 동작한다`,
+      `(${term})는 무조건 CSS 기능이다`,
+      `(${term})는 무조건 JS 문법이다`
       ]);
     }
 
