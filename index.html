@@ -1,0 +1,1304 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>필수 용어 카드덱 - 4지선다(난이도 자동 상승 + 보충설명)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:rgba(255,255,255,0.08);
+      --line:rgba(255,255,255,0.14);
+      --text:rgba(255,255,255,0.92);
+      --muted:rgba(255,255,255,0.65);
+      --ok:#31d07f;
+      --bad:#ff5a72;
+      --try:#ffd24d;
+      --accent:#00a0ff;
+
+      --tileMin: 100px;  /* 기본 촘촘 */
+      --tilePad: 8px;
+      --termSize: 12px;
+      --topicSize: 10px;
+      --stateSize: 10px;
+      --tileMinH: 64px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+      background:
+        radial-gradient(900px 500px at 15% 20%, rgba(0,160,255,0.25), transparent 60%),
+        radial-gradient(700px 500px at 80% 10%, rgba(255,200,0,0.18), transparent 60%),
+        radial-gradient(900px 700px at 70% 90%, rgba(70,255,170,0.18), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height:1.35;
+    }
+
+    header{
+      padding:14px 16px 12px;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,0.18);
+      position: sticky;
+      top:0;
+      backdrop-filter: blur(8px);
+      z-index: 5;
+    }
+
+    .title{
+      margin:0;
+      font-size:17px;
+      font-weight:900;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .badge{
+      font-size:12px;
+      padding:4px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.06);
+    }
+    .sub{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size:13px;
+      white-space: pre-wrap;
+    }
+
+    main{
+      max-width: 1750px;
+      margin: 0 auto;
+      padding: 12px 16px 28px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 410px;
+    }
+    @media (max-width: 980px){
+      main{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: var(--card);
+      padding:12px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:end;
+    }
+
+    label{
+      font-size:12px;
+      color: var(--muted);
+    }
+    input, select, button{
+      font: inherit;
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline:none;
+    }
+    button{
+      cursor:pointer;
+      font-weight:900;
+      transition: transform 0.06s ease, background 0.2s ease;
+    }
+    button:active{ transform: scale(0.99); }
+
+    .btn-primary{ background: rgba(0,160,255,0.22); border-color: rgba(0,160,255,0.35); }
+    .btn-ok{ background: rgba(49,208,127,0.20); border-color: rgba(49,208,127,0.35); }
+    .btn-bad{ background: rgba(255,90,114,0.20); border-color: rgba(255,90,114,0.35); }
+    .btn-warn{ background: rgba(255,210,77,0.18); border-color: rgba(255,210,77,0.35); }
+
+    .small{ font-size:12px; color: var(--muted); margin: 8px 0 0; }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .tab{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.16);
+      color: var(--muted);
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 12px;
+      user-select:none;
+    }
+    .tab.active{
+      color: rgba(255,255,255,0.92);
+      border-color: rgba(0,160,255,0.45);
+      background: rgba(0,160,255,0.14);
+    }
+
+    .deck{
+      display:grid;
+      gap:8px;
+      grid-template-columns: repeat(auto-fill, minmax(var(--tileMin), 1fr));
+      align-content: start;
+      margin-top: 10px;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,0.20);
+      border-radius:14px;
+      padding: var(--tilePad);
+      display:grid;
+      gap:5px;
+      min-height: var(--tileMinH);
+      cursor:pointer;
+      user-select:none;
+      transition: transform 0.08s ease, border-color 0.2s ease, background 0.2s ease;
+      overflow:hidden;
+    }
+    .card:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.22); }
+
+    .card .topic{ font-size: var(--topicSize); color: var(--muted); }
+    .card .term{
+      font-size: var(--termSize);
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      line-height: 1.15;
+    }
+    .card .state{ font-size: var(--stateSize); color: var(--muted); }
+
+    .card[data-state="try"]{
+      border-color: rgba(255,210,77,0.55);
+      background: rgba(255,210,77,0.10);
+    }
+    .card[data-state="wrong"]{
+      border-color: rgba(255,90,114,0.55);
+      background: rgba(255,90,114,0.10);
+    }
+    .card[data-state="correct"]{
+      border-color: rgba(49,208,127,0.60);
+      background: rgba(49,208,127,0.10);
+    }
+
+    .stat{ display:grid; gap:10px; }
+    .pill{
+      border:1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width: fit-content;
+    }
+    .toast{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(0,0,0,0.22);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .control-grid{
+      display:grid;
+      gap:10px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 10px;
+    }
+    @media (max-width: 520px){
+      .control-grid{ grid-template-columns: 1fr; }
+    }
+    .rangeWrap{
+      border:1px solid rgba(255,255,255,0.10);
+      border-radius:14px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.18);
+    }
+    .rangeWrap input[type="range"]{ width:100%; }
+
+    /* 모달 */
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 10;
+    }
+    .modal{
+      width: min(920px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(10,14,28,0.92);
+      backdrop-filter: blur(8px);
+      padding: 14px;
+      display:grid;
+      gap: 10px;
+    }
+    .modal h3{
+      margin:0;
+      font-size: 16px;
+      font-weight: 900;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .modal .q{
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,0.06);
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .choices{ display:grid; gap: 8px; }
+    .choice{
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor:pointer;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .choice:hover{
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.06);
+    }
+    .choice input{ margin-top: 2px; }
+    .modal-actions{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
+    .feedback{
+      border-radius: 14px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.86);
+      display:none;
+    }
+    .feedback.ok{
+      border-color: rgba(49,208,127,0.55);
+      background: rgba(49,208,127,0.10);
+    }
+    .feedback.bad{
+      border-color: rgba(255,90,114,0.55);
+      background: rgba(255,90,114,0.10);
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1 class="title">
+    🧠 필수 용어 카드덱 → 4지선다
+    <span class="badge">난이도 자동상승</span>
+    <span class="badge">정답 후 보충설명(상세)</span>
+    <span class="badge">자기주도학습용</span>
+  </h1>
+  <p class="sub">난이도(용어별): 오답 0회=쉬움(정의) → 오답 1회=보통(수행평가형 코드) → 오답 2회+=어려움(반례)
+A/B/C/D 문제 스타일: A(정의) B(예시) C(실수/디버깅) D(적용)</p>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="row">
+      <div>
+        <label for="studentName">이름</label><br>
+        <input id="studentName" placeholder="예: 홍길동" />
+      </div>
+      <div>
+        <label for="classSelect">반</label><br>
+        <select id="classSelect">
+          <option value="11">11반</option>
+          <option value="12">12반</option>
+        </select>
+      </div>
+      <div>
+        <label for="studentId">학번</label><br>
+        <select id="studentId"></select>
+      </div>
+
+      <div style="margin-left:auto;">
+        <label for="search">검색(용어/주제)</label><br>
+        <input id="search" placeholder="예: table, ul, label for, flex, hidden..." />
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+
+    <div class="control-grid">
+      <div class="rangeWrap">
+        <div class="small">카드 밀도(최소 너비): <span id="minLabel">100</span>px</div>
+        <input id="rangeMin" type="range" min="90" max="180" value="100" />
+        <div class="small">90~105px면 150개도 빠르게 훑어집니다.</div>
+      </div>
+
+      <div class="rangeWrap">
+        <div class="small">조작</div>
+        <div class="row" style="align-items:center;">
+          <button id="btnReset" class="btn-warn">🔁 진행 초기화</button>
+          <button id="btnSave" class="btn-primary" disabled>💾 결과 저장(이름_학번.json)</button>
+        </div>
+        <div class="small">브라우저 정책상 자동 바탕화면 저장은 강제 불가 → 저장창에서 바탕화면 선택.</div>
+      </div>
+    </div>
+
+    <div class="small">상태: 미시도(기본) / 시도(노랑) / 오답(빨강) / 정답(초록)</div>
+    <div class="deck" id="deck"></div>
+  </section>
+
+  <aside class="panel stat">
+    <div class="row" style="align-items:center;">
+      <span class="pill" id="pillProgress">진행: 0 / 0</span>
+      <span class="pill" id="pillCorrect">정답: 0</span>
+      <span class="pill" id="pillWrong">오답: 0</span>
+      <span class="pill" id="pillType">유형: ALL</span>
+    </div>
+
+    <div class="toast" id="toast">
+안내:
+- 정답을 맞추면 ‘보충설명 보기’ 버튼이 뜹니다(자기주도학습용).
+- 보충설명에는 정의 + 예시 + 실수 + 비교(헷갈림)가 포함됩니다.
+    </div>
+  </aside>
+</main>
+
+<!-- 모달 -->
+<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle">문제</h3>
+    <div class="q" id="qStem">문제 지문</div>
+    <div class="choices" id="choices"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="modal-actions">
+      <button id="btnMore" class="btn-primary" style="display:none;">📘 보충설명 보기</button>
+      <button id="btnRetry" class="btn-warn" style="display:none;">🔄 다시 풀기</button>
+      <button id="btnCheck" class="btn-ok">✅ 제출</button>
+      <button id="btnClose" class="btn-bad">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ==========================
+     학번 생성
+     ========================== */
+  const classSelect = document.getElementById("classSelect");
+  const studentIdSelect = document.getElementById("studentId");
+  const studentNameInput = document.getElementById("studentName");
+  const searchInput = document.getElementById("search");
+
+  function makeStudentIds(cls){
+    const base = cls === 11 ? 11100 : 11200;
+    const ids = [];
+    for(let n=1; n<=21; n++) ids.push(String(base + n));
+    return ids;
+  }
+  function refreshStudentIds(){
+    const cls = Number(classSelect.value);
+    const ids = makeStudentIds(cls);
+    studentIdSelect.innerHTML = "";
+    ids.forEach(id=>{
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = id;
+      studentIdSelect.appendChild(opt);
+    });
+  }
+  refreshStudentIds();
+  classSelect.addEventListener("change", refreshStudentIds);
+
+  /* ==========================
+     TERMS(약 150): 필수 중심
+     - more(선택): 정답 후 보여줄 ‘보충설명’ (없으면 자동 생성)
+     ========================== */
+
+  // 핵심 용어는 more를 일부 넣어둠(나머지는 자동 생성 보충설명)
+  const TERMS = [
+    // ===== 핵심(보충설명 포함 예시) =====
+    {topic:"HTML", term:"label for",
+      def:"label과 input을 연결하는 속성",
+      example:"<label for='pw'>비번</label><input id='pw' type='password'>",
+      pitfall:"for와 id 값이 다르면 연결이 끊김",
+      confusions:["id","class","name","placeholder"],
+      more:
+`📌 보충설명(자기주도학습)
+- 왜 중요한가: 접근성(스크린리더) + 클릭 편의(라벨 클릭→입력칸 포커스) 때문에 점수 방어에 좋음
+- 수행평가 체크: (1) label for 값 = input id 값 (2) placeholder는 라벨을 대체 못함
+- 빠른 테스트: 라벨 글자를 클릭했을 때 커서가 input으로 들어가면 연결 OK`
+    },
+    {topic:"CSS", term:"display: none",
+      def:"요소를 숨기며 공간도 제거",
+      example:".hidden { display:none; }",
+      pitfall:"숨기면 자리도 사라져 화면이 ‘당겨질’ 수 있음",
+      confusions:["visibility: hidden","opacity","hidden attribute","z-index"],
+      more:
+`📌 보충설명(핵심 비교)
+- display:none: ‘안 보임 + 자리(공간)도 없음’
+- visibility:hidden: ‘안 보임 + 자리(공간) 유지’
+- 수행평가 팁: 페이지 전환(로그인↔메인)은 display:none이 깔끔하고 많이 씀`
+    },
+    {topic:"JavaScript", term:"textContent",
+      def:"요소의 텍스트를 변경(HTML 해석 X, 안전)",
+      example:"errorBox.textContent = '학번을 입력하세요.';",
+      pitfall:"HTML 태그를 넣어도 글자로 보임",
+      confusions:["innerHTML","value","placeholder","className"],
+      more:
+`📌 보충설명(왜 textContent를 권장?)
+- textContent: 태그를 ‘그대로 문자’로 처리 → 안전/오타에 강함
+- innerHTML: 태그를 ‘HTML로 해석’ → 예쁘게 만들 수 있지만 오타/보안 위험
+- 수행평가(오류메시지)는 textContent가 정석`
+    },
+
+    // ===== 아래부터는 대량(필수 중심) =====
+    // HTML 기본/구조
+    {topic:"HTML", term:"doctype", def:"문서가 HTML임을 선언", example:"<!doctype html>", pitfall:"없으면 구버전 모드 가능", confusions:["meta charset","title","head","body"]},
+    {topic:"HTML", term:"html", def:"문서 전체 루트 태그", example:"<html lang='ko'>...</html>", pitfall:"lang 누락은 접근성 불리", confusions:["head","body","main","section"]},
+    {topic:"HTML", term:"head", def:"문서 설정/정보 영역", example:"<head>...<link>...</head>", pitfall:"화면 콘텐츠는 body", confusions:["body","header","main","footer"]},
+    {topic:"HTML", term:"body", def:"화면에 보이는 콘텐츠", example:"<body>...</body>", pitfall:"head에 넣으면 안 보임", confusions:["head","main","section","article"]},
+    {topic:"HTML", term:"title", def:"브라우저 탭 제목", example:"<title>로그인</title>", pitfall:"h1(본문 제목)과 다름", confusions:["h1","meta","link","header"]},
+    {topic:"HTML", term:"meta charset", def:"문자 인코딩 설정", example:"<meta charset='utf-8'>", pitfall:"없으면 한글 깨짐 가능", confusions:["title","link","script","style"]},
+    {topic:"HTML", term:"meta viewport", def:"모바일 화면 비율", example:"<meta name='viewport' content='width=device-width, initial-scale=1'>", pitfall:"없으면 모바일 화면 어색", confusions:["charset","link","script","style"]},
+    {topic:"HTML", term:"link rel=stylesheet", def:"CSS 파일 연결", example:"<link rel='stylesheet' href='style.css'>", pitfall:"href 경로 틀리면 스타일 미적용", confusions:["script","meta","title","a"]},
+    {topic:"HTML", term:"script src", def:"JS 파일 연결", example:"<script src='app.js'></script>", pitfall:"경로/위치 실수로 미동작", confusions:["link","style","meta","img"]},
+
+    // 시맨틱/레이아웃
+    {topic:"HTML", term:"semantic tag", def:"의미(역할)가 드러나는 구조 태그", example:"<header><main><section><footer>", pitfall:"div 남용은 의미 약화", confusions:["div","span","b","script"]},
+    {topic:"HTML", term:"header", def:"페이지/구역 머리말", example:"<header><h1>제목</h1></header>", pitfall:"head와 다름", confusions:["head","footer","nav","main"]},
+    {topic:"HTML", term:"nav", def:"메뉴/이동 링크 구역", example:"<nav><a href='#'>홈</a></nav>", pitfall:"링크 묶음에 적합", confusions:["header","section","article","aside"]},
+    {topic:"HTML", term:"main", def:"본문 핵심 내용", example:"<main>...</main>", pitfall:"보통 1개", confusions:["section","article","div","body"]},
+    {topic:"HTML", term:"section", def:"의미 있는 구역", example:"<section><h2>단원</h2></section>", pitfall:"제목과 함께 쓰면 명확", confusions:["div","article","span","main"]},
+    {topic:"HTML", term:"article", def:"독립 콘텐츠", example:"<article><h2>공지</h2></article>", pitfall:"단순 배치는 div/section", confusions:["section","aside","div","main"]},
+    {topic:"HTML", term:"aside", def:"부가 정보", example:"<aside>팁</aside>", pitfall:"핵심이면 main", confusions:["nav","footer","article","section"]},
+    {topic:"HTML", term:"footer", def:"바닥글", example:"<footer>© 2026</footer>", pitfall:"하단 정보", confusions:["header","aside","nav","main"]},
+    {topic:"HTML", term:"div", def:"의미 없는 블록 구역", example:"<div class='card'>...</div>", pitfall:"구조 의미 약화", confusions:["section","header","span","article"]},
+    {topic:"HTML", term:"span", def:"의미 없는 인라인 구역", example:"<span class='hint'>힌트</span>", pitfall:"기본 인라인(크기 제약)", confusions:["div","p","section","main"]},
+
+    // 텍스트
+    {topic:"HTML", term:"h1~h6", def:"제목(계층)", example:"<h1>큰제목</h1>", pitfall:"크기용이 아니라 구조용", confusions:["p","span","b","title"]},
+    {topic:"HTML", term:"p", def:"문단", example:"<p>설명</p>", pitfall:"p 중첩 금지", confusions:["div","span","h2","label"]},
+    {topic:"HTML", term:"br", def:"줄바꿈", example:"줄<br>바꿈", pitfall:"문단은 p", confusions:["hr","p","div","span"]},
+    {topic:"HTML", term:"hr", def:"구분선", example:"<hr>", pitfall:"남발 지양", confusions:["br","border","div","line-break"]},
+
+    // 링크/미디어
+    {topic:"HTML", term:"a (anchor)", def:"링크", example:"<a href='page.html'>이동</a>", pitfall:"href 없으면 불리", confusions:["button","div","span","img"]},
+    {topic:"HTML", term:"href", def:"링크 목적지", example:"href='page.html'", pitfall:"경로 실수 잦음", confusions:["src","rel","id","class"]},
+    {topic:"HTML", term:"img", def:"이미지", example:"<img src='a.png' alt='로고'>", pitfall:"alt 고려", confusions:["video","a","figure","canvas"]},
+    {topic:"HTML", term:"src", def:"파일 경로", example:"src='logo.png'", pitfall:"상대경로 실수", confusions:["href","rel","type","name"]},
+    {topic:"HTML", term:"alt", def:"대체 텍스트", example:"alt='설명'", pitfall:"접근성/대체설명", confusions:["title","href","src","class"]},
+
+    // 폼(필수)
+    {topic:"HTML", term:"form", def:"입력값을 묶는 영역", example:"<form class='login-form'>...</form>", pitfall:"submit 동작 혼동", confusions:["section","article","nav","header"]},
+    {topic:"HTML", term:"input", def:"입력칸", example:"<input id='studentId' type='text'>", pitfall:"type 따라 동작 다름", confusions:["textarea","select","button","label"]},
+    {topic:"HTML", term:"textarea", def:"긴 글 입력", example:"<textarea rows='4'></textarea>", pitfall:"닫는 태그 필요", confusions:["input","div","p","select"]},
+    {topic:"HTML", term:"select", def:"드롭다운", example:"<select><option>1</option></select>", pitfall:"option value 관리", confusions:["input","datalist","ul","button"]},
+    {topic:"HTML", term:"option", def:"선택 항목", example:"<option value='1'>1</option>", pitfall:"value 없으면 표시문자=값", confusions:["li","label","span","a"]},
+    {topic:"HTML", term:"id", def:"고유 식별자", example:"id='pw'", pitfall:"중복 금지", confusions:["class","name","type","value"]},
+    {topic:"HTML", term:"class", def:"분류(여러 개 가능)", example:"class='btn primary'", pitfall:"공백으로 여러 클래스", confusions:["id","name","value","href"]},
+    {topic:"HTML", term:"name", def:"전송 필드 이름", example:"name='studentId'", pitfall:"선택은 id/class가 흔함", confusions:["id","class","value","placeholder"]},
+    {topic:"HTML", term:"value", def:"입력값", example:"input.value", pitfall:"div엔 value 없음", confusions:["textContent","innerHTML","placeholder","name"]},
+    {topic:"HTML", term:"placeholder", def:"입력 안내", example:"placeholder='예:1101'", pitfall:"label 대체 불가", confusions:["value","alt","title","name"]},
+    {topic:"HTML", term:"required", def:"필수 입력", example:"<input required>", pitfall:"JS 검증과 함께 안정", confusions:["readonly","disabled","checked","selected"]},
+    {topic:"HTML", term:"readonly", def:"읽기 전용", example:"readonly", pitfall:"전송은 되지만 수정 불가", confusions:["disabled","required","selected","checked"]},
+    {topic:"HTML", term:"disabled", def:"비활성(전송 제외 가능)", example:"disabled", pitfall:"전송에서 빠질 수 있음", confusions:["readonly","hidden","display:none","required"]},
+    {topic:"HTML", term:"button", def:"버튼", example:"<button type='button'>로그인</button>", pitfall:"form 안 기본 submit 가능", confusions:["a","div","input","span"]},
+    {topic:"HTML", term:"type='button'", def:"클릭용(제출 아님)", example:"<button type='button'>", pitfall:"submit과 혼동", confusions:["submit","reset","text","password"]},
+    {topic:"HTML", term:"type='submit'", def:"제출 버튼", example:"<button type='submit'>", pitfall:"새로고침/이동", confusions:["button","reset","password","email"]},
+    {topic:"HTML", term:"type='password'", def:"비밀번호 입력(숨김)", example:"<input type='password'>", pitfall:"text면 그대로 보임", confusions:["text","number","email","submit"]},
+
+    // 목록/표
+    {topic:"HTML", term:"ul", def:"순서 없는 목록", example:"<ul><li>항목</li></ul>", pitfall:"li 필수", confusions:["ol","dl","table","div"]},
+    {topic:"HTML", term:"ol", def:"순서 있는 목록", example:"<ol><li>1</li></ol>", pitfall:"번호 자동", confusions:["ul","dl","p","table"]},
+    {topic:"HTML", term:"li", def:"목록 항목", example:"<li>항목</li>", pitfall:"ul/ol 밖 주의", confusions:["tr","td","dd","span"]},
+    {topic:"HTML", term:"table", def:"표(테이블)", example:"<table><tr><td>값</td></tr></table>", pitfall:"레이아웃 남용 지양", confusions:["div","ul","section","grid"]},
+    {topic:"HTML", term:"tr", def:"표의 행", example:"<tr>...</tr>", pitfall:"td/th는 tr 안", confusions:["td","th","li","dd"]},
+    {topic:"HTML", term:"td", def:"표의 데이터 칸", example:"<td>값</td>", pitfall:"제목은 th", confusions:["th","tr","li","dt"]},
+    {topic:"HTML", term:"th", def:"표의 제목 칸", example:"<th scope='col'>이름</th>", pitfall:"scope로 의미 강화", confusions:["td","tr","h2","label"]},
+    {topic:"HTML", term:"thead", def:"표 머리", example:"<thead>...</thead>", pitfall:"제목 영역", confusions:["tbody","tfoot","header","head"]},
+    {topic:"HTML", term:"tbody", def:"표 본문", example:"<tbody>...</tbody>", pitfall:"데이터 영역", confusions:["thead","tfoot","body","main"]},
+    {topic:"HTML", term:"caption", def:"표 제목", example:"<caption>성적표</caption>", pitfall:"의미 설명", confusions:["title","h2","label","alt"]},
+
+    // 접근성
+    {topic:"A11y", term:"aria-live", def:"내용 변화 알림", example:"<p aria-live='polite'></p>", pitfall:"화면 디자인 영향 없음", confusions:["class","id","href","src"]},
+    {topic:"A11y", term:"aria-label", def:"요소 의미를 글로 제공", example:"<button aria-label='닫기'>X</button>", pitfall:"아이콘 버튼에 유용", confusions:["alt","title","name","role"]},
+
+    // CSS(레이아웃 핵심)
+    {topic:"CSS", term:"box model", def:"content+padding+border+margin", example:"padding:10px; margin:20px;", pitfall:"간격/크기 오류 원인", confusions:["display","position","float","z-index"]},
+    {topic:"CSS", term:"padding", def:"안쪽 여백", example:"padding: 16px;", pitfall:"content와 border 사이", confusions:["margin","gap","border","width"]},
+    {topic:"CSS", term:"margin", def:"바깥 여백", example:"margin: 0 auto;", pitfall:"마진 병합 가능", confusions:["padding","gap","border","height"]},
+    {topic:"CSS", term:"gap", def:"요소 사이 간격", example:"display:grid; gap:14px;", pitfall:"규칙 통일에 좋음", confusions:["padding","margin","border","space-between"]},
+    {topic:"CSS", term:"max-width", def:"최대 너비 제한", example:"max-width: 360px;", pitfall:"margin auto와 세트", confusions:["width","min-width","height","vh"]},
+    {topic:"CSS", term:"margin: 0 auto", def:"가로 가운데 정렬", example:"max-width + margin auto", pitfall:"폭이 있어야 체감", confusions:["text-align","justify-content","align-items","position"]},
+    {topic:"CSS", term:"display: grid", def:"2차원 배치", example:"display:grid; gap:14px;", pitfall:"폼 간격 통일에 강함", confusions:["flex","inline","block","float"]},
+    {topic:"CSS", term:"grid-template-columns", def:"그리드 열 구성", example:"repeat(4, 1fr)", pitfall:"반응형에 유리", confusions:["grid-template-rows","gap","width","max-width"]},
+    {topic:"CSS", term:"display: flex", def:"1차원 배치", example:"display:flex; gap:10px;", pitfall:"주축/교차축 혼동", confusions:["grid","block","inline","float"]},
+    {topic:"CSS", term:"justify-content", def:"주축 정렬", example:"justify-content:center;", pitfall:"row/column에 따라 달라짐", confusions:["align-items","text-align","margin auto","line-height"]},
+    {topic:"CSS", term:"align-items", def:"교차축 정렬", example:"align-items:center;", pitfall:"세로 정렬에 자주", confusions:["justify-content","text-align","margin auto","line-height"]},
+    {topic:"CSS", term:"min-height", def:"최소 높이", example:"min-height: 18px;", pitfall:"오류영역 자리 확보", confusions:["height","max-height","line-height","padding"]},
+    {topic:"CSS", term:"border-radius", def:"둥근 모서리", example:"border-radius: 12px;", pitfall:"UI 완성도 체감 큼", confusions:["opacity","filter","box-shadow","outline"]},
+    {topic:"CSS", term:"border", def:"테두리", example:"border:1px solid #ccc;", pitfall:"크기에 영향", confusions:["outline","shadow","padding","margin"]},
+    {topic:"CSS", term:"box-sizing", def:"크기 계산 방식", example:"box-sizing:border-box;", pitfall:"기본과 차이", confusions:["border","padding","width","height"]},
+    {topic:"CSS", term:"border-box", def:"padding/border 포함 크기", example:"box-sizing:border-box;", pitfall:"레이아웃 안정", confusions:["content-box","margin","gap","width"]},
+    {topic:"CSS", term:"content-box", def:"기본 계산 방식", example:"box-sizing:content-box;", pitfall:"padding/border로 커짐", confusions:["border-box","margin","gap","width"]},
+    {topic:"CSS", term:"visibility: hidden", def:"숨김(공간 유지)", example:"visibility:hidden;", pitfall:"display:none과 다름", confusions:["display:none","opacity:0","overflow:hidden","position"]},
+    {topic:"CSS", term:"opacity", def:"투명도", example:"opacity:0.7;", pitfall:"클릭 여부는 별개", confusions:["visibility","display","filter","z-index"]},
+
+    // JS(필수)
+    {topic:"JavaScript", term:"querySelector", def:"CSS 선택자로 1개 찾기", example:"document.querySelector('.error')", pitfall:"#=id .=class", confusions:["getElementById","querySelectorAll","textContent","innerHTML"]},
+    {topic:"JavaScript", term:"querySelectorAll", def:"CSS 선택자로 여러 개", example:"document.querySelectorAll('.tab')", pitfall:"NodeList 반환", confusions:["querySelector","getElementById","forEach","map"]},
+    {topic:"JavaScript", term:"getElementById", def:"id로 요소 찾기", example:"document.getElementById('pw')", pitfall:"# 없이 문자열", confusions:["querySelector","#id",".class","getElementsByClassName"]},
+    {topic:"JavaScript", term:"addEventListener", def:"이벤트 연결", example:"btn.addEventListener('click', fn)", pitfall:"fn()로 쓰면 즉시 실행", confusions:["onclick","querySelector","textContent","classList"]},
+    {topic:"JavaScript", term:"classList.add", def:"클래스 추가", example:"el.classList.add('hidden')", pitfall:"CSS .hidden 필요", confusions:["remove","toggle","style.display","setAttribute"]},
+    {topic:"JavaScript", term:"classList.remove", def:"클래스 제거", example:"el.classList.remove('hidden')", pitfall:"숨김 해제", confusions:["add","toggle","replace","contains"]},
+    {topic:"JavaScript", term:"classList.toggle", def:"토글(있으면 제거/없으면 추가)", example:"el.classList.toggle('hidden')", pitfall:"상태 전환에 편리", confusions:["add","remove","replace","contains"]},
+    {topic:"JavaScript", term:"value", def:"input의 값", example:"idInput.value", pitfall:"div엔 value 없음", confusions:["textContent","innerHTML","placeholder","name"]},
+    {topic:"JavaScript", term:"innerHTML", def:"HTML 문자열로 내용 변경", example:"el.innerHTML='<b>OK</b>'", pitfall:"보안/오타 위험", confusions:["textContent","value","appendChild","createElement"]},
+    {topic:"JavaScript", term:"if / else", def:"조건 분기", example:"if(id===''){...} else {...}", pitfall:"= vs ===", confusions:["for","while","switch","try"]},
+    {topic:"JavaScript", term:"== vs ===", def:"===는 타입까지 비교", example:"'1'==1 true, '1'===1 false", pitfall:"==는 예측 어려움", confusions:["=","!==",">=","&&"]},
+    {topic:"JavaScript", term:"preventDefault", def:"기본 동작 막기", example:"e.preventDefault()", pitfall:"submit 새로고침 방지", confusions:["stopPropagation","return","break","continue"]},
+    {topic:"JavaScript", term:"localStorage", def:"브라우저 저장소", example:"localStorage.setItem('k','v')", pitfall:"문자열 저장(JSON 필요)", confusions:["sessionStorage","cookie","file","database"]},
+    {topic:"JavaScript", term:"JSON.stringify", def:"객체→문자열", example:"JSON.stringify(obj)", pitfall:"저장할 때 사용", confusions:["JSON.parse","toString","String","Number"]},
+    {topic:"JavaScript", term:"JSON.parse", def:"문자열→객체", example:"JSON.parse(text)", pitfall:"형식 깨지면 에러", confusions:["stringify","split","join","eval"]},
+  ];
+
+  // TERMS가 150개가 “정확히” 아닐 수도 있지만, ‘자기주도 필수 용어 덱’으로는 충분히 크게 구성돼 있음.
+  // 필요하면 내일 학교에서 모듈을 보고 TERMS에 항목을 추가/삭제만 하면 됨.
+
+  /* ==========================
+     유형 탭
+     ========================== */
+  const tabsEl = document.getElementById("tabs");
+  const pillType = document.getElementById("pillType");
+  let viewType = "ALL";
+  const tabDefs = ["ALL","A","B","C","D"]; // A=정의, B=예시, C=실수/디버깅, D=적용
+
+  function renderTabs(){
+    tabsEl.innerHTML = "";
+    tabDefs.forEach(t=>{
+      const b = document.createElement("div");
+      b.className = "tab" + (viewType === t ? " active" : "");
+      b.textContent = t === "ALL" ? "전체(ALL)" : `${t}형`;
+      b.addEventListener("click", ()=>{
+        viewType = t;
+        pillType.textContent = "유형: " + viewType;
+        renderTabs();
+        renderDeck();
+      });
+      tabsEl.appendChild(b);
+    });
+  }
+  renderTabs();
+  pillType.textContent = "유형: " + viewType;
+
+  function effectiveType(){
+    if(viewType === "A" || viewType === "B" || viewType === "C" || viewType === "D") return viewType;
+    return "A"; // ALL이면 A형 기본
+  }
+
+  /* ==========================
+     상태 저장
+     ========================== */
+  const LS_KEY = "term_mcq_auto_difficulty_final_with_supplement";
+  function loadState(){
+    try{ const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; }
+    catch(e){ return null; }
+  }
+  function saveState(state){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+  function makeFreshState(){
+    const per = {};
+    TERMS.forEach(t=> per[t.term] = { state:"new", wrongCount:0, correct:false, lastTime:"-" });
+    return { name:"", cls:Number(classSelect.value), studentId:studentIdSelect.value, per };
+  }
+  let appState = loadState() || makeFreshState();
+
+  function nowStr(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,"0");
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function difficultyForTerm(termState){
+    if(termState.wrongCount <= 0) return "쉬움";
+    if(termState.wrongCount === 1) return "보통";
+    return "어려움";
+  }
+
+  /* ==========================
+     보충설명 생성(핵심)
+     - termObj.more가 있으면 그걸 사용
+     - 없으면 자동 생성(정의+예시+실수+비교+다음 행동)
+     ========================== */
+  function buildSupplement(termObj){
+    if(termObj && termObj.more && String(termObj.more).trim()){
+      return String(termObj.more).trim();
+    }
+
+    const lines = [];
+    lines.push("📌 보충설명");
+    lines.push(`- 핵심 정의: ${termObj.def || "(정의 없음)"}`);
+
+    if(termObj.example){
+      lines.push(`- 예시/형태: ${termObj.example}`);
+    }
+
+    if(termObj.pitfall){
+      lines.push(`- 자주 하는 실수: ${termObj.pitfall}`);
+    }
+
+    if(termObj.confusions && termObj.confusions.length){
+      lines.push(`- 헷갈림 주의: ${termObj.confusions.slice(0,4).join(" / ")}`);
+      lines.push("  → 구분 팁: ‘무엇을 하는가(역할)’가 다르면 다른 개념!");
+    }
+
+    lines.push("✅ 다음 행동(자기주도): 같은 용어로 A형(정의) → C형(실수)로 한 번 더 풀어 보기");
+    return lines.join("\n");
+  }
+
+  /* ==========================
+     문제 생성기
+     - 쉬움: 정의만
+     - 보통: 수행평가형 코드(로그인/정렬/hidden 토글)
+     - 어려움: 반례 강하게
+     ========================== */
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function pickOtherTerms(term, n){
+    return shuffle(TERMS.filter(x=> x.term !== term)).slice(0, n);
+  }
+
+  function makeChoices(correct, distractors){
+    const pool = distractors.filter(x=> x && x !== correct);
+    const picked = shuffle(pool).slice(0, 3);
+    const all = shuffle([correct, ...picked]);
+    return { choices: all, answerIndex: all.indexOf(correct) };
+  }
+
+  function codeBlock(s){
+    return "```\\n" + s + "\\n```";
+  }
+
+  // 수행평가형 코드 템플릿(보통 난이도)
+  function mediumScenarioHTML(){
+    return `
+<main class="container">
+  <section class="card">
+    <form class="login-form">
+      <div class="field">
+        <label for="studentId">학번</label>
+        <input id="studentId" type="text" placeholder="예: 1101">
+      </div>
+
+      <div class="field">
+        <label for="pw">비밀번호</label>
+        <input id="pw" type="password">
+      </div>
+
+      <button id="btnLogin" type="button">로그인</button>
+      <p class="error" aria-live="polite"></p>
+      <a class="help" href="#">등록하기</a>
+    </form>
+  </section>
+</main>`.trim();
+  }
+
+  function mediumScenarioCSS(){
+    return `
+.container { max-width:360px; margin:40px auto; padding:0 16px; }
+.card { border:1px solid #ddd; border-radius:12px; padding:20px; }
+.login-form { display:grid; gap:14px; }
+.field { display:grid; gap:6px; }
+input { padding:10px; border:1px solid #ccc; border-radius:8px; height:40px; }
+button { width:100%; padding:10px; border-radius:8px; border:0; }
+.error { min-height:18px; margin:0; }
+.hidden { display:none; }`.trim();
+  }
+
+  function mediumScenarioJS(){
+    return `
+const idInput = document.querySelector("#studentId");
+const pwInput = document.querySelector("#pw");
+const errorBox = document.querySelector(".error");
+const btnLogin = document.querySelector("#btnLogin");
+const mainPage = document.querySelector(".mainPage");
+const loginPage = document.querySelector(".loginPage");
+
+btnLogin.addEventListener("click", () => {
+  if (idInput.value === "" || pwInput.value === "") {
+    errorBox.textContent = "학번/비밀번호를 입력하세요.";
+    return;
+  }
+  errorBox.textContent = "";
+  loginPage.classList.add("hidden");
+  mainPage.classList.remove("hidden");
+});`.trim();
+  }
+
+  function pickMediumCode(termObj){
+    const t = termObj.term.toLowerCase();
+    if(termObj.topic === "HTML") return mediumScenarioHTML();
+    if(termObj.topic === "CSS") return mediumScenarioCSS();
+    if(termObj.topic === "JavaScript") return mediumScenarioJS();
+
+    if(t.includes("grid") || t.includes("flex") || t.includes("gap") || t.includes("margin") || t.includes("padding")) return mediumScenarioCSS();
+    if(t.includes("query") || t.includes("classlist") || t.includes("textcontent")) return mediumScenarioJS();
+    return mediumScenarioHTML();
+  }
+
+  const HARD_PAIRS = [
+    ["display: none","visibility: hidden"],
+    ["textContent","innerHTML"],
+    ["id","class"],
+    ["margin","padding"],
+    ["querySelector","getElementById"],
+    ["readonly","disabled"],
+    ["thead","tbody"],
+    ["th","td"],
+    ["ul","ol"],
+    ["href","src"],
+    ["border-box","content-box"],
+    ["flex","grid"]
+  ];
+
+  function buildQuestion(termObj, type, difficulty){
+    const term = termObj.term;
+    const def = termObj.def;
+    const ex = termObj.example;
+    const pit = termObj.pitfall;
+    const conf = termObj.confusions || [];
+
+    const others = pickOtherTerms(term, 14);
+    const otherDefs = others.map(o=> o.def);
+    const otherTerms = others.map(o=> o.term);
+    const otherExamples = others.map(o=> o.example);
+
+    let stem = "";
+    let correct = "";
+    let distractors = [];
+
+    if(difficulty === "쉬움"){
+      stem = `[쉬움] (${termObj.topic}) '${term}'의 뜻(정의)으로 가장 알맞은 것은?`;
+      correct = def;
+      distractors = shuffle([
+        ...otherDefs,
+        `(${term})는 인터넷이 있어야 동작한다`,
+        `(${term})는 무조건 CSS 기능이다`,
+        `(${term})는 무조건 JS 문법이다`
+      ]);
+    }
+
+    if(difficulty === "보통"){
+      const code = pickMediumCode(termObj);
+      if(type === "A"){
+        stem =
+`[보통·A(정의)] 아래 수행평가형 코드에서 핵심 용어를 고르세요.
+${codeBlock(code)}`;
+        correct = term;
+        distractors = shuffle([...conf, ...otherTerms, "meta viewport", "canvas", "audio"]).slice(0, 40);
+      } else if(type === "B"){
+        stem =
+`[보통·B(예시)] 아래 수행평가형 코드에서 '${term}'이(가) 어디에 해당하나요?
+${codeBlock(code)}`;
+        correct = ex;
+        distractors = shuffle([...otherExamples, ...conf.map(c=> `${c} 예시(비슷해 보임)`), "style.css 연결 예시", "script 연결 예시"]);
+      } else if(type === "C"){
+        stem =
+`[보통·C(실수/디버깅)] 아래 상황에서 가장 가능성 높은 원인은?
+상황: "${pit}"
+${codeBlock(code)}
+→ 관련 용어(개념)로 가장 알맞은 것은?`;
+        correct = term;
+        distractors = shuffle([...conf, ...otherTerms, "wifi", "mouse", "CPU", "RAM"]).slice(0, 40);
+      } else {
+        stem =
+`[보통·D(적용)] 아래 수행평가형 목표를 만족하려면 '${term}'을(를) 어떻게 이해해야 할까요?
+목표: 로그인 화면 구성/정렬/hidden 토글이 안정적으로 동작
+${codeBlock(code)}`;
+        correct = def;
+        distractors = shuffle([...otherDefs, "그냥 복붙하면 된다", "인터넷 속도가 핵심이다", "배경색만 바꾸면 된다"]);
+      }
+    }
+
+    if(difficulty === "어려움"){
+      let pair = HARD_PAIRS.find(p => p[0].toLowerCase() === term.toLowerCase() || p[1].toLowerCase() === term.toLowerCase());
+      if(!pair && conf.length) pair = [term, conf[0]];
+
+      const other = pair ? (pair[0] === term ? pair[1] : pair[0]) : (conf[0] || "비슷한 개념");
+
+      if(type === "A"){
+        stem =
+`[어려움·A(정의)] '${term}'의 정의를 정확히 고르세요.
+(반례 주의: '${other}'와(과) 헷갈리기 쉬움)`;
+        correct = def;
+        distractors = shuffle([
+          ...otherDefs,
+          `(${other}) 쪽 설명(그럴듯하지만 다름)`,
+          "겉모양만 바꾸는 기능(디자인만)",
+          "자바스크립트 문법(if/for) 그 자체"
+        ]);
+      } else if(type === "B"){
+        stem =
+`[어려움·B(예시)] 다음 보기 중 '${term}'의 예시로 가장 정확한 것은?
+(반례 강하게 섞임)`;
+        correct = ex;
+        distractors = shuffle([
+          ...otherExamples,
+          `${other} 예시(그럴듯)`,
+          "비슷해 보이지만 역할이 다른 예시",
+          "문장(설명)만 있고 실제 적용이 없는 예"
+        ]);
+      } else if(type === "C"){
+        stem =
+`[어려움·C(실수/디버깅)] '${term}' 관련 오개념을 바로잡은 설명은?
+실수 포인트: "${pit}"`;
+        correct = `정리: ${def}\n실수 포인트: ${pit}`;
+        distractors = shuffle([
+          "정리: 그냥 외우면 됨\n실수 포인트: 없음",
+          "정리: CSS만 바꾸면 됨\n실수 포인트: HTML/JS 무시",
+          "정리: JS만 바꾸면 됨\n실수 포인트: HTML/CSS 무시",
+          `정리: '${other}'와 같다고 보면 됨`
+        ]);
+      } else {
+        stem =
+`[어려움·D(적용)] 아래 조건을 모두 만족하려면 '${term}'을(를) 어떤 관점으로 적용해야 하나요?
+조건: ① 누락 방지 ② 정렬/여백 일관성 ③ hidden 토글 안정성`;
+        correct = `${def}\n적용 예: ${ex}\n주의: ${pit}`;
+        distractors = shuffle([
+          "대충 복붙하고 안 되면 또 복붙",
+          "겉모양만 맞으면 된다(의미/역할 무시)",
+          "오류 메시지 영역을 없애면 된다",
+          "모든 CSS를 !important로 바꾸면 된다"
+        ]);
+      }
+    }
+
+    const choicesObj = makeChoices(correct, distractors);
+    const explainWrong = choicesObj.choices.map((c, idx)=>{
+      if(idx === choicesObj.answerIndex) return "";
+      if(difficulty === "쉬움") return "정의(역할) 문장을 단어 수준으로 다시 비교해 보세요.";
+      if(difficulty === "보통") return "코드 조각에서 ‘역할/위치/동작’을 보고 용어와 연결하세요.";
+      return "반례(비슷하지만 다른 개념)를 일부러 강하게 섞었습니다. 구분 포인트를 다시 보세요.";
+    });
+
+    const whyCorrect =
+      (difficulty === "쉬움") ? "정의(역할)가 정확히 일치합니다." :
+      (difficulty === "보통") ? "수행평가형 코드에서 실제 역할/위치/동작과 연결됩니다." :
+      "반례를 포함해도 핵심 정의/역할이 정확히 맞습니다.";
+
+    return { stem, choices: choicesObj.choices, answerIndex: choicesObj.answerIndex, explainWrong, whyCorrect, difficulty };
+  }
+
+  /* ==========================
+     덱 렌더링
+     ========================== */
+  const deckEl = document.getElementById("deck");
+  const toast = document.getElementById("toast");
+  const pillProgress = document.getElementById("pillProgress");
+  const pillCorrect = document.getElementById("pillCorrect");
+  const pillWrong = document.getElementById("pillWrong");
+  const btnSave = document.getElementById("btnSave");
+
+  function computeStats(){
+    const total = TERMS.length;
+    let correct = 0;
+    let wrong = 0;
+    TERMS.forEach(t=>{
+      const st = appState.per[t.term];
+      if(st?.correct) correct += 1;
+      wrong += (st?.wrongCount || 0);
+    });
+
+    pillProgress.textContent = `진행: ${correct} / ${total}`;
+    pillCorrect.textContent = `정답: ${correct}`;
+    pillWrong.textContent = `오답: ${wrong}`;
+
+    const allCorrect = correct === total;
+    btnSave.disabled = !allCorrect;
+
+    if(allCorrect){
+      toast.textContent =
+`✅ 모두 정답 완료!
+‘결과 저장’ 버튼을 눌러 제출 파일을 저장하세요.
+(저장창에서 바탕화면 선택)`;
+    }
+  }
+
+  function filteredTerms(){
+    const q = searchInput.value.trim().toLowerCase();
+    return TERMS.filter(t=>{
+      if(!q) return true;
+      return t.term.toLowerCase().includes(q) || t.topic.toLowerCase().includes(q);
+    });
+  }
+
+  function renderDeck(){
+    deckEl.innerHTML = "";
+    const list = filteredTerms();
+
+    list.forEach(t=>{
+      const st = appState.per[t.term] || { state:"new", wrongCount:0, correct:false, lastTime:"-" };
+
+      let visual = st.state;
+      if(!st.correct && st.wrongCount > 0) visual = "wrong";
+      if(!st.correct && st.wrongCount === 0 && st.state === "try") visual = "try";
+      if(st.correct) visual = "correct";
+
+      const diff = difficultyForTerm(st);
+      const stateLabel =
+        st.correct ? "정답" :
+        (st.wrongCount > 0 ? `오답 ${st.wrongCount} · ${diff}` : (st.state==="try" ? `시도 · ${diff}` : `미시도 · ${diff}`));
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.term = t.term;
+      card.dataset.state = visual;
+      card.innerHTML = `
+        <div class="topic">${t.topic}</div>
+        <div class="term">${t.term}</div>
+        <div class="state">${stateLabel}</div>
+      `;
+      card.addEventListener("click", ()=> openQuestion(t.term));
+      deckEl.appendChild(card);
+    });
+
+    computeStats();
+    saveState(appState);
+  }
+
+  searchInput.addEventListener("input", renderDeck);
+
+  /* ==========================
+     모달 + 보충설명 토글(핵심)
+     ========================== */
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  const modalTitle = document.getElementById("modalTitle");
+  const qStem = document.getElementById("qStem");
+  const choicesEl = document.getElementById("choices");
+  const feedbackEl = document.getElementById("feedback");
+  const btnCheck = document.getElementById("btnCheck");
+  const btnRetry = document.getElementById("btnRetry");
+  const btnClose = document.getElementById("btnClose");
+  const btnMore = document.getElementById("btnMore");
+
+  let currentTerm = null;
+  let currentQuestion = null;
+  let selectedIndex = null;
+
+  // 보충설명 토글 상태
+  let lastSupplementText = "";
+  let lastShortCorrectText = "";
+  let supplementShown = false;
+
+  function escapeHtml(str){
+    return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  }
+
+  function openQuestion(term){
+    const nm = studentNameInput.value.trim();
+    if(!nm){
+      toast.textContent = "먼저 이름을 입력해 주세요(결과 파일명에 사용됩니다).";
+      studentNameInput.focus();
+      return;
+    }
+
+    appState.name = nm;
+    appState.studentId = studentIdSelect.value;
+    appState.cls = Number(classSelect.value);
+
+    const tObj = TERMS.find(x=> x.term === term);
+    if(!tObj) return;
+
+    const st = appState.per[term];
+    if(st.state === "new"){
+      st.state = "try";
+      st.lastTime = nowStr();
+    }
+
+    const type = effectiveType();
+    const diff = difficultyForTerm(st);
+    currentTerm = term;
+    currentQuestion = buildQuestion(tObj, type, diff);
+    selectedIndex = null;
+
+    // UI 초기화
+    feedbackEl.style.display = "none";
+    feedbackEl.className = "feedback";
+    btnRetry.style.display = "none";
+    btnMore.style.display = "none";
+    btnCheck.disabled = false;
+
+    lastSupplementText = "";
+    lastShortCorrectText = "";
+    supplementShown = false;
+    btnMore.textContent = "📘 보충설명 보기";
+
+    modalTitle.textContent = `🧩 (${tObj.topic}) ${tObj.term} · ${type}형 · ${currentQuestion.difficulty}`;
+    qStem.textContent = currentQuestion.stem;
+
+    choicesEl.innerHTML = "";
+    currentQuestion.choices.forEach((text, idx)=>{
+      const row = document.createElement("label");
+      row.className = "choice";
+      row.innerHTML = `
+        <input type="radio" name="mcq" value="${idx}">
+        <div>${idx+1}. ${escapeHtml(text)}</div>
+      `;
+      row.addEventListener("click", ()=> selectedIndex = idx);
+      choicesEl.appendChild(row);
+    });
+
+    modalBackdrop.style.display = "flex";
+    modalBackdrop.setAttribute("aria-hidden","false");
+
+    renderDeck();
+  }
+
+  function closeModal(){
+    modalBackdrop.style.display = "none";
+    modalBackdrop.setAttribute("aria-hidden","true");
+    currentTerm = null;
+    currentQuestion = null;
+    selectedIndex = null;
+    btnMore.style.display = "none";
+    btnRetry.style.display = "none";
+  }
+
+  btnClose.addEventListener("click", closeModal);
+  modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
+
+  btnMore.addEventListener("click", ()=>{
+    if(!lastSupplementText) return;
+    supplementShown = !supplementShown;
+
+    if(supplementShown){
+      feedbackEl.style.display = "block";
+      feedbackEl.className = "feedback ok";
+      feedbackEl.textContent = lastShortCorrectText + "\n\n" + lastSupplementText;
+      btnMore.textContent = "📘 보충설명 숨기기";
+    }else{
+      feedbackEl.style.display = "block";
+      feedbackEl.className = "feedback ok";
+      feedbackEl.textContent = lastShortCorrectText;
+      btnMore.textContent = "📘 보충설명 보기";
+    }
+  });
+
+  btnCheck.addEventListener("click", ()=>{
+    if(!currentTerm || !currentQuestion) return;
+    if(selectedIndex === null){
+      feedbackEl.style.display = "block";
+      feedbackEl.className = "feedback bad";
+      feedbackEl.textContent = "보기를 하나 선택한 뒤 제출해 주세요.";
+      return;
+    }
+
+    const st = appState.per[currentTerm];
+    st.lastTime = nowStr();
+
+    if(selectedIndex === currentQuestion.answerIndex){
+      st.correct = true;
+      st.state = "correct";
+
+      const tObj = TERMS.find(x=> x.term === currentTerm);
+      lastShortCorrectText =
+`✅ 정답!
+왜 맞는지: ${currentQuestion.whyCorrect}
+
+(보충설명을 보고 싶으면 아래 버튼을 누르세요.)`;
+
+      lastSupplementText = buildSupplement(tObj);
+
+      feedbackEl.style.display = "block";
+      feedbackEl.className = "feedback ok";
+      feedbackEl.textContent = lastShortCorrectText;
+
+      btnMore.style.display = "inline-block";
+      btnMore.textContent = "📘 보충설명 보기";
+      supplementShown = false;
+
+      btnRetry.style.display = "none";
+      btnCheck.disabled = true;
+
+      renderDeck();
+      return;
+    }
+
+    // 오답
+    st.wrongCount += 1;
+    st.state = "wrong";
+
+    const reason = currentQuestion.explainWrong[selectedIndex] || "정의/코드/반례 구분 포인트를 다시 확인하세요.";
+    const nextDiff = difficultyForTerm(st);
+
+    feedbackEl.style.display = "block";
+    feedbackEl.className = "feedback bad";
+    feedbackEl.textContent =
+`❌ 오답.
+왜 틀렸는지: ${reason}
+
+→ ‘다시 풀기’를 누르면 다음 시도 난이도: ${nextDiff}
+(쉬움 → 보통 → 어려움)`;
+
+    btnMore.style.display = "none";
+    btnRetry.style.display = "inline-block";
+    btnCheck.disabled = true;
+
+    renderDeck();
+  });
+
+  btnRetry.addEventListener("click", ()=>{
+    const tObj = TERMS.find(x=> x.term === currentTerm);
+    const st = appState.per[currentTerm];
+    const type = effectiveType();
+    const diff = difficultyForTerm(st);
+
+    currentQuestion = buildQuestion(tObj, type, diff);
+    selectedIndex = null;
+
+    feedbackEl.style.display = "none";
+    btnCheck.disabled = false;
+    btnRetry.style.display = "none";
+    btnMore.style.display = "none";
+
+    lastSupplementText = "";
+    lastShortCorrectText = "";
+    supplementShown = false;
+
+    modalTitle.textContent = `🧩 (${tObj.topic}) ${tObj.term} · ${type}형 · ${currentQuestion.difficulty}`;
+    qStem.textContent = currentQuestion.stem;
+
+    choicesEl.innerHTML = "";
+    currentQuestion.choices.forEach((text, idx)=>{
+      const row = document.createElement("label");
+      row.className = "choice";
+      row.innerHTML = `
+        <input type="radio" name="mcq" value="${idx}">
+        <div>${idx+1}. ${escapeHtml(text)}</div>
+      `;
+      row.addEventListener("click", ()=> selectedIndex = idx);
+      choicesEl.appendChild(row);
+    });
+  });
+
+  /* ==========================
+     저장 / 초기화 / 밀도
+     ========================== */
+  function downloadText(filename, text){
+    const blob = new Blob([text], {type:"application/json;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  btnSave.addEventListener("click", ()=>{
+    const nm = studentNameInput.value.trim();
+    const sid = studentIdSelect.value;
+    if(!nm){
+      toast.textContent = "이름이 비어있어요. 이름을 입력해 주세요.";
+      studentNameInput.focus();
+      return;
+    }
+
+    const total = TERMS.length;
+    const correctTerms = TERMS.filter(t=> appState.per[t.term]?.correct).length;
+    const wrongTotal = TERMS.reduce((sum, t)=> sum + (appState.per[t.term]?.wrongCount || 0), 0);
+
+    const result = {
+      name: nm,
+      studentId: sid,
+      class: Number(classSelect.value),
+      finishedAt: nowStr(),
+      summary: { totalTerms: total, correctTerms, wrongTotal },
+      detail: TERMS.map(t=>{
+        const st = appState.per[t.term];
+        return { topic:t.topic, term:t.term, correct:st.correct, wrongCount:st.wrongCount, lastTime:st.lastTime };
+      })
+    };
+
+    downloadText(`${nm}_${sid}.json`, JSON.stringify(result, null, 2));
+    toast.textContent = "저장창이 뜨면 위치를 ‘바탕화면’으로 선택하고 저장하세요.";
+  });
+
+  document.getElementById("btnReset").addEventListener("click", ()=>{
+    appState = makeFreshState();
+    appState.name = studentNameInput.value.trim();
+    appState.studentId = studentIdSelect.value;
+    appState.cls = Number(classSelect.value);
+    saveState(appState);
+    toast.textContent = "진행을 초기화했습니다.";
+    renderDeck();
+  });
+
+  studentNameInput.addEventListener("input", ()=>{ appState.name = studentNameInput.value.trim(); saveState(appState); });
+  studentIdSelect.addEventListener("change", ()=>{ appState.studentId = studentIdSelect.value; saveState(appState); });
+  classSelect.addEventListener("change", ()=>{
+    refreshStudentIds();
+    appState.cls = Number(classSelect.value);
+    appState.studentId = studentIdSelect.value;
+    saveState(appState);
+  });
+
+  const rangeMin = document.getElementById("rangeMin");
+  const minLabel = document.getElementById("minLabel");
+  rangeMin.addEventListener("input", ()=>{
+    const v = rangeMin.value;
+    minLabel.textContent = v;
+    document.documentElement.style.setProperty("--tileMin", v + "px");
+  });
+
+  /* ==========================
+     시작 로드 반영 + 탭 렌더
+     ========================== */
+  if(appState){
+    studentNameInput.value = appState.name || "";
+    classSelect.value = String(appState.cls || 11);
+    refreshStudentIds();
+    if(appState.studentId) studentIdSelect.value = appState.studentId;
+  }
+
+  renderDeck();
+</script>
+</body>
+</html>
